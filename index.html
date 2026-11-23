@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منصة عملاء جولدن بيكسل — نموذج تفاعلي</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#F3F4F6;--card:#FFFFFF;--ink:#1C1D21;--ink2:#3A3D45;--muted:#5A5E68;--line:#E3E5EA;--line2:#ECEEF2;--orange:#F28A0A;--orange-ink:#A85400;--tint:#FFF1DC;--ok-bg:#E1F3E8;--ok:#0B5E33;--warn-bg:#FFF1DC;--warn:#8A4600}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic',system-ui,'Segoe UI',Tahoma,sans-serif;font-size:15px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+a{color:var(--orange-ink)}
+.num{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.app{display:flex;min-height:100vh}
+.side{width:264px;flex:none;background:var(--card);border-inline-end:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px}
+.brand img{width:44px;height:44px;object-fit:contain}
+.brand b{display:block;font-size:17px;line-height:1.3}
+.brand span{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:3px}
+.nav button{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border:none;background:transparent;border-radius:10px;font-weight:500;color:var(--ink2);text-align:right;width:100%}
+.nav button:hover{background:var(--bg)}
+.nav button[aria-current="page"]{background:var(--tint);color:var(--ink);font-weight:700}
+.nav button[aria-current="page"] svg{stroke:var(--orange-ink)}
+.subnav{display:flex;flex-direction:column;gap:2px;padding-inline-start:20px}
+.subnav button{min-height:44px;font-size:14px}
+.subnav button[aria-pressed="true"]{background:var(--tint);font-weight:700;color:var(--ink)}
+.logo{display:inline-flex;align-items:center;gap:4px;flex:none;background:#fff;border-radius:8px;padding:3px 4px;box-shadow:0 0 0 1px var(--line)}
+.logo img{height:22px;width:auto;display:block;border-radius:5px}
+.logo.s{padding:2px 3px;border-radius:6px}.logo.s img{height:16px;border-radius:4px}
+.manager{margin-top:auto;background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.manager small{color:var(--muted);font-size:12px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:22px 32px 0}
+.top .who{display:flex;align-items:center;gap:12px}
+.top .who img{display:none;width:38px;height:38px;object-fit:contain}
+.top h1{font-size:24px;line-height:1.3}
+.top p{color:var(--muted);font-size:14px}
+.tools{display:flex;align-items:center;gap:10px;position:relative}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 16px;border-radius:10px;border:1px solid #D5D8DF;background:var(--card);font-weight:600;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--bg)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:var(--ink);font-weight:700}
+.btn.primary:hover{background:#FF9A1F}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.icon{width:46px;padding:0;position:relative}
+.dot{position:absolute;top:9px;inset-inline-end:10px;width:9px;height:9px;border-radius:50%;background:var(--orange);border:2px solid #fff}
+.notif{position:absolute;top:54px;inset-inline-end:0;width:min(340px,86vw);background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.14);padding:8px;z-index:20;display:none}
+.notif.open{display:block}
+.notif button{display:block;width:100%;text-align:right;border:none;background:transparent;border-radius:10px;padding:12px;min-height:44px}
+.notif button:hover{background:var(--bg)}
+.notif small{display:block;color:var(--muted);font-size:12px}
+#view{padding:22px 32px 48px;display:flex;flex-direction:column;gap:20px;max-width:1280px;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.balance{background:var(--ink);color:#fff;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:16px}
+.balance .row{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px}
+.balance .lbl{font-size:14px;color:#C9CCD3}
+.balance .big{font-size:44px;font-weight:700;line-height:1.15;display:block;text-align:right}
+.bar{height:10px;background:#3A3C44;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--orange);border-radius:99px}
+.balance .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:14px;color:#C9CCD3}
+.balance .foot b{color:#fff}.balance .foot .hot{color:#FFB454}
+.pbar{display:flex;flex-wrap:wrap;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px}
+.pbar button{flex:1 1 170px;display:flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 12px;border:none;border-radius:10px;background:transparent;font-weight:600;white-space:nowrap}
+.pbar button:hover{background:var(--bg)}
+.pbar button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.pbar small{font-weight:500;font-size:13px}
+.pbar .sm{display:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.kpi{display:flex;flex-direction:column;gap:4px}
+.kpi .lbl{font-size:14px;color:var(--muted)}
+.kpi .val{font-size:28px;font-weight:700;text-align:right;display:block}
+.kpi small{color:var(--muted);font-size:13px}
+.head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.head h2{font-size:18px}
+.head small{color:var(--muted);font-size:13px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:13px;font-weight:600;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+td{padding:14px 12px;border-bottom:1px solid var(--line2)}
+th.n,td.n{text-align:left}
+td.n{direction:ltr;white-space:nowrap}
+.ledger{min-width:480px}
+tr.click{cursor:pointer}
+tr.click:hover td{background:#FAFAFB}
+.link{border:none;background:none;padding:0;font-weight:700;text-align:right;color:var(--ink);text-decoration:underline;text-decoration-color:#C9CCD3;text-underline-offset:4px;min-height:32px}
+.link:hover{color:var(--orange-ink)}
+.plat{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.sq{width:10px;height:10px;border-radius:3px;flex:none}
+.pill{display:inline-block;padding:3px 12px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap}
+.st-active{background:var(--ok-bg);color:var(--ok)}
+.st-paused{background:var(--line2);color:var(--ink2)}
+.st-review,.st-pending{background:var(--warn-bg);color:var(--warn)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:44px;padding:0 16px;border-radius:99px;border:1px solid #D5D8DF;background:var(--card);font-weight:600}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:600}
+.field input,.field select,.field textarea{min-height:46px;border:1px solid #C3C7D0;border-radius:10px;padding:10px 12px;background:#fff;width:100%}
+.field textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid #F9B55A;outline-offset:2px}
+.cards{display:none;flex-direction:column;gap:10px}
+.ccard{display:block;width:100%;text-align:right;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ccard .t{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.ccard .g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--line2);margin-top:10px;padding-top:10px}
+.ccard .g small{display:block;color:var(--muted);font-size:12px}
+.ccard .g b{display:block;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--bg);border-radius:12px;padding:14px}
+.stat small{display:block;color:var(--muted);font-size:13px}
+.stat b{font-size:20px;display:block;text-align:right}
+.ads{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.ad{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.ad .ph{height:170px;background:repeating-linear-gradient(135deg,#ECEEF2 0 12px,#F6F7F9 12px 24px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:13px;font-weight:600}
+.ad .b{padding:14px;display:flex;flex-direction:column;gap:8px}
+.ad .r{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.eq{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px}
+.eq>div{flex:1 1 180px}
+.eq .op{flex:none;display:flex;align-items:center;font-size:30px;color:var(--muted)}
+.eq .res{background:var(--ink);color:#fff;border-radius:12px;padding:16px 20px}
+.eq .res .val{color:#FFB454}.eq .res .lbl,.eq .res small{color:#C9CCD3}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:20px;align-items:start}
+.dep{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line2)}
+.dep .ic{width:42px;height:42px;flex:none;border-radius:10px;background:var(--tint);display:flex;align-items:center;justify-content:center}
+.dep .mid{flex:1;min-width:0}
+.dep small{display:block;color:var(--muted);font-size:13px}
+.dep .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+tr.in td{background:#F1F9F4}
+.share{height:8px;background:var(--line2);border-radius:99px;overflow:hidden;min-width:90px}
+.share i{display:block;height:100%;border-radius:99px}
+details{border-bottom:1px solid var(--line2)}
+summary{min-height:50px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+details p{color:var(--ink2);padding-bottom:14px}
+.note{font-size:13px;color:var(--muted)}
+.empty{color:var(--muted);padding:18px 0}
+.back{align-self:flex-start}
+.overlay{position:fixed;inset:0;background:rgba(20,21,24,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:16px;padding:24px;width:min(460px,100%);display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow:auto}
+.modal .acts{display:flex;gap:10px;justify-content:flex-start;flex-wrap:wrap}
+.ways{border:none;padding:0;margin:0;min-width:0}
+.ways legend{font-size:14px;font-weight:600;padding:0;margin-bottom:6px}
+.wrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.way{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;padding:10px 6px;border:2px solid transparent;border-radius:12px;font-weight:700;text-align:center;cursor:pointer;color:var(--ink)}
+.way.qi{background:#FFD400}.way.fib{background:#77BDA5}.way.neo{background:#E6DBFF}.way.zain{background:#4B1D8F;color:#fff}
+.way:has(input:checked){border-color:var(--ink);box-shadow:0 0 0 2px #fff inset}
+.way.off{cursor:not-allowed}
+.way input{width:18px;height:18px;accent-color:#1C1D21;margin:0}
+.way small{display:block;font-size:12px;font-weight:600;background:#fff;color:#1C1D21;border-radius:99px;padding:1px 10px;margin-top:4px}
+.wayinfo{background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.wayinfo:empty{display:none}
+.kv{display:flex;align-items:center;gap:8px}
+.kv span{color:var(--muted);font-size:13px;flex:0 0 68px}
+.kv b{flex:1;min-width:0;font-size:15px;text-align:right;white-space:nowrap}
+.wa{display:flex;flex-direction:column;gap:10px;padding:14px 0;border-top:1px solid var(--line2)}
+.wa:first-of-type{border-top:none;padding-top:0}
+.btn.wabtn{background:#25D366;border-color:#25D366;color:#10241A;font-weight:700}
+.btn.wabtn:hover{background:#1FC15B}
+.btn.sm{min-height:44px;padding:0 14px;font-size:14px}
+.qrbox{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.qrbox>span{color:var(--muted);font-size:14px}
+.qrbox small{color:var(--muted);font-size:12px}
+.qr{border:1px solid var(--line);background:#fff;border-radius:12px;padding:6px;cursor:zoom-in}
+.qr img{display:block;width:132px;height:auto}
+.zoombox{background:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center;max-width:min(460px,100%)}
+.zoombox img{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block}
+.err{color:#A1260D;font-size:14px;font-weight:600;min-height:20px}
+.toast{position:fixed;bottom:24px;inset-inline-start:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;z-index:60;max-width:90vw;display:none;font-weight:500}
+.toast.open{display:block}
+.bottom{display:none}
+.proto{background:var(--tint);color:var(--warn);font-size:13px;font-weight:600;text-align:center;padding:6px 12px}
+@media (max-width:860px){
+ .side{display:none}
+ .wrow{gap:6px}.way{font-size:13px;padding:8px 2px}.modal{padding:18px}
+ .top{padding:14px 16px 0;flex-wrap:nowrap;align-items:flex-start}.top .who{flex:1;min-width:0}.ledger{min-width:0;font-size:13px}.ledger th,.ledger td{padding:10px 5px}.top h1{font-size:19px}.top .who img{display:block}.top .period{display:none}
+ #view{padding:16px 16px 100px;gap:14px}
+ .balance{padding:20px}.balance .big{font-size:36px}.balance .row .btn{width:100%}
+ .pbar{border:none;background:transparent;padding:0}
+ .pbar button{flex:1 1 auto;min-height:46px;border:1px solid #D5D8DF;background:var(--card);border-radius:99px}
+ .pbar button[aria-pressed="true"]{border-color:var(--ink)}.pbar .lg,.pbar small{display:none}.pbar .sm{display:inline}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi .val{font-size:21px}.card{padding:16px}
+ .tbl{display:none}.cards{display:flex}
+ .two{grid-template-columns:minmax(0,1fr)}
+ .eq .op{display:none}
+ .bottom{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;bottom:0;inset-inline:0;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px));z-index:30}
+ .bottom button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;border:none;background:none;font-size:11.5px;font-weight:500;color:var(--ink2)}
+ .bottom button[aria-current="page"]{color:var(--orange-ink);font-weight:700}
+ .toast{bottom:84px}
+}
+</style>
+</head>
+<body>
+<div class="proto">نموذج تفاعلي للعرض — كل الأرقام والأسماء تجريبية</div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img src="logo.png" alt="شعار جولدن بيكسل"><div><b>جولدن بيكسل</b><span>بوابة العملاء</span></div></div>
+    <nav class="nav" aria-label="القائمة الرئيسية" id="sideNav"></nav>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <div class="who"><img src="logo.png" alt=""><div><h1 id="pageTitle"></h1><p id="pageSub"></p></div></div>
+      <div class="tools">
+        <span class="btn period" aria-label="الفترة المعروضة"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>هذا الشهر: 1 – 23 نوفمبر</span>
+        <button class="btn icon" id="bell" type="button" aria-label="الإشعارات" aria-expanded="false"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4"/></svg><span class="dot" aria-hidden="true"></span></button>
+        <div class="notif" id="notif">
+          <button type="button" data-go="wallet"><b>تم تأكيد إيداعك <span class="num">$1,000.00</span></b><small>18 نوفمبر · المحفظة والإيداعات</small></button>
+          <button type="button" data-camp="6"><b>إعلانك قيد المراجعة على سناب شات</b><small>إعلان المجموعة الجديدة</small></button>
+          <button type="button" data-go="wallet"><b>رصيدك يكفي تقريباً 8 أيام</b><small>فكّر بإيداع رصيد حتى لا تتوقف حملاتك</small></button>
+        </div>
+      </div>
+    </header>
+    <main id="view" tabindex="-1"></main>
+  </div>
+</div>
+<nav class="bottom" aria-label="التنقل السفلي" id="bottomNav"></nav>
+<div class="overlay" id="overlay"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" id="modal"></div></div>
+<div class="overlay" id="zoom" style="z-index:70"><div class="zoombox" role="dialog" aria-modal="true" aria-label="باركود سوبر كي"><img src="qi-qr.png" alt="باركود سوبر كي باسم حامد قيس"><button class="btn" type="button" data-act="zoomclose">إغلاق</button></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+var money=function(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+var num=function(n){return n.toLocaleString('en-US');};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+var N=function(s){return '<span class="num">'+s+'</span>';};
+var I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+ campaigns:'<path d="M4 10v4h3l8 5V5l-8 5H4z"/><path d="M18.5 9a4 4 0 010 6"/>',
+ wallet:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M16 15h2"/>',
+ reports:'<path d="M5 20V10"/><path d="M12 20V4"/><path d="M19 20v-7"/>',
+ support:'<path d="M4 13v-1a8 8 0 0116 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/>',
+ grid:'<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
+ img:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ down:'<path d="M12 5v14"/><path d="M6 13l6 6 6-6"/>',
+ back:'<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>'
+};
+var svg=function(k,s){return '<svg aria-hidden="true" width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[k]+'</svg>';};
+var LG={meta:[['pl-fb.png','فيسبوك'],['pl-ig.png','إنستغرام']],tiktok:[['pl-tiktok.png','تيك توك']],snap:[['pl-snap.png','سناب شات']],google:[['pl-google.png','جوجل']]};
+var slot=function(k,sm){return '<span class="logo'+(sm?' s':'')+'" aria-hidden="true">'+LG[k].map(function(l){return '<img src="'+l[0]+'" alt="">';}).join('')+'</span>';};
+
+var P={meta:{ch:'م',fg:'#FFFFFF',name:'ميتا',tab:'إعلانات ميتا',color:'#2563EB'},tiktok:{ch:'ت',fg:'#FFFFFF',name:'تيك توك',tab:'إعلانات تيك توك',color:'#111827'},snap:{ch:'س',fg:'#1C1D21',name:'سناب شات',tab:'إعلانات سناب شات',color:'#EAB308'},google:{ch:'ج',fg:'#FFFFFF',name:'جوجل أدز',tab:'إعلانات جوجل',color:'#0F9D58'}};
+var PK=['meta','tiktok','snap','google'];
+var ST={active:'نشطة',paused:'متوقفة',review:'قيد المراجعة'};
+var C=[
+ {id:1,name:'تخفيضات الشتاء — رسائل',p:'meta',st:'active',goal:'رسائل',budget:35,start:'2 نوفمبر',today:31.6,total:612.3,impr:184200,clicks:3910,results:486,ads:[['فيديو العرض الرئيسي','فيديو',.55],['صورة الخصم 30%','صورة',.3],['كاروسيل المنتجات','صور متعددة',.15]]},
+ {id:2,name:'إعادة استهداف زوار الموقع',p:'meta',st:'active',goal:'مبيعات الموقع',budget:25,start:'2 نوفمبر',today:20.5,total:568.1,impr:96400,clicks:2150,results:142,ads:[['تذكير السلة','صورة',.6],['آراء الزبائن','فيديو',.4]]},
+ {id:3,name:'فيديو المنتج الجديد',p:'tiktok',st:'active',goal:'زيارات الموقع',budget:45,start:'5 نوفمبر',today:41.3,total:702.75,impr:412800,clicks:6340,results:521,ads:[['فيديو التجربة','فيديو',.5],['فيديو فتح الصندوق','فيديو',.35],['فيديو قبل وبعد','فيديو',.15]]},
+ {id:4,name:'حملة الافتتاح',p:'tiktok',st:'paused',goal:'مشاهدات الفيديو',budget:20,start:'1 نوفمبر',today:0,total:140,impr:88100,clicks:1120,results:64,ads:[['فيديو الافتتاح','فيديو',1]]},
+ {id:5,name:'عروض نهاية الأسبوع',p:'snap',st:'active',goal:'زيارات الموقع',budget:15,start:'7 نوفمبر',today:12.6,total:311.2,impr:152300,clicks:1870,results:98,ads:[['قصة العرض','فيديو',.7],['صورة العرض','صورة',.3]]},
+ {id:6,name:'إعلان المجموعة الجديدة',p:'snap',st:'review',goal:'زيارات الموقع',budget:15,start:'23 نوفمبر',today:0,total:0,impr:0,clicks:0,results:0,ads:[['فيديو المجموعة','فيديو',1]]},
+ {id:7,name:'بحث — الكلمات الرئيسية',p:'google',st:'active',goal:'نقرات البحث',budget:22,start:'3 نوفمبر',today:20.4,total:428.15,impr:21900,clicks:1460,results:73,ads:[['إعلان نصي — العلامة','نصي',.6],['إعلان نصي — العروض','نصي',.4]]}
+];
+var deposits=[
+ {title:'إيداع رصيد',meta:'18 نوفمبر · سوبر كي · صورة الحوالة مرفقة',amt:1000,st:'ok'},
+ {title:'إيداع رصيد',meta:'10 نوفمبر · سوبر كي · صورة الحوالة مرفقة',amt:1000,st:'ok'},
+ {title:'إيداع رصيد',meta:'2 نوفمبر · نيو · صورة الحوالة مرفقة',amt:1500,st:'ok'},
+ {title:'رصيد مُرحّل',meta:'1 نوفمبر · من شهر أكتوبر',amt:420,st:'ok'}
+];
+var moves=[['23 نوفمبر','s',126.4,'ميتا 52.10 · تيك توك 41.30 · جوجل 20.40 · سناب 12.60'],['22 نوفمبر','s',136.6,'5 حملات نشطة'],['21 نوفمبر','s',131,'5 حملات نشطة'],['20 نوفمبر','s',139,'5 حملات نشطة'],['19 نوفمبر','s',122,'5 حملات نشطة'],['18 نوفمبر','s',134,'5 حملات نشطة'],['18 نوفمبر','d',1000,'أكّده فريق جولدن بيكسل'],['17 نوفمبر','s',128,'5 حملات نشطة'],['16 نوفمبر','s',125,'5 حملات نشطة']];
+var tickets=[];
+var BAL=1157.5, IN=3920, OUT=2762.5;
+var S={view:'home',platform:'all',status:'all',q:'',camp:null};
+var VIEWS={home:['الرئيسية','home'],campaigns:['الحملات والإعلانات','campaigns'],wallet:['المحفظة والإيداعات','wallet'],reports:['التقارير','reports'],support:['الدعم والتواصل','support']};
+var SHORT={home:'الرئيسية',campaigns:'الحملات',wallet:'المحفظة',reports:'التقارير',support:'الدعم'};
+
+var sum=function(l,f){return l.reduce(function(s,c){return s+c[f];},0);};
+var scope=function(){return C.filter(function(c){return S.platform==='all'||c.p===S.platform;});};
+var cpr=function(c){return c.results?money(c.total/c.results):'—';};
+var plat=function(k){return '<span class="plat">'+slot(k,true)+P[k].name+'</span>';};
+var pill=function(st){return '<span class="pill st-'+st+'">'+ST[st]+'</span>';};
+var cnt=function(n,one,two,many){return n===1?one:n===2?two:n+' '+many;};
+
+function pbar(){
+ var h='<div class="pbar" role="group" aria-label="اختر المنصة">';
+ ['all'].concat(PK).forEach(function(k){
+  var n=k==='all'?C.length:C.filter(function(c){return c.p===k;}).length;
+  h+='<button type="button" data-plat="'+k+'" aria-pressed="'+(S.platform===k)+'">'+(k==='all'?svg('grid',20):slot(k))+'<span class="lg">'+(k==='all'?'كل المنصات':P[k].tab)+'</span><span class="sm">'+(k==='all'?'الكل':P[k].name)+'</span> <small class="num">('+n+')</small></button>';
+ });
+ return h+'</div>';
+}
+function balance(){
+ return '<section class="balance" aria-label="الرصيد المتبقي"><div class="row"><div><span class="lbl">الرصيد المتبقي في حسابك · مشترك لكل المنصات</span><span class="big num">'+money(BAL)+'</span></div><button class="btn primary" type="button" data-act="deposit">'+svg('plus',18)+'طلب إيداع رصيد</button></div><div class="bar" role="img" aria-label="صُرف 70% من الرصيد المودع"><i style="width:'+(OUT/IN*100).toFixed(1)+'%"></i></div><div class="foot"><span>صُرف <b class="num">'+money(OUT)+'</b> من أصل <b class="num">'+money(IN)+'</b> مودعة</span><span>يكفي تقريباً <b class="hot">8 أيام</b> بمعدل صرف '+N('$131')+' يومياً</span></div></section>';
+}
+function campTable(list){
+ if(!list.length) return '<p class="empty">لا توجد حملات مطابقة. جرّب منصة أو حالة أخرى.</p>';
+ var h='<div class="scroll tbl"><table><thead><tr><th>الحملة</th><th>المنصة</th><th>الحالة</th><th class="n">صرف اليوم</th><th class="n">الصرف الكلي</th><th class="n">الظهور</th><th class="n">النقرات</th><th class="n">النتائج</th><th class="n">كلفة النتيجة</th></tr></thead><tbody>';
+ list.forEach(function(c){h+='<tr class="click" data-camp="'+c.id+'"><td><button class="link" type="button" data-camp="'+c.id+'">'+c.name+'</button></td><td>'+plat(c.p)+'</td><td>'+pill(c.st)+'</td><td class="n"><b>'+money(c.today)+'</b></td><td class="n">'+money(c.total)+'</td><td class="n">'+num(c.impr)+'</td><td class="n">'+num(c.clicks)+'</td><td class="n">'+num(c.results)+'</td><td class="n">'+cpr(c)+'</td></tr>';});
+ h+='</tbody></table></div><div class="cards">';
+ list.forEach(function(c){h+='<button class="ccard" type="button" data-camp="'+c.id+'"><span class="t"><span><b>'+c.name+'</b><br>'+plat(c.p)+'</span>'+pill(c.st)+'</span><span class="g"><span><small>صرف اليوم</small><b class="num">'+money(c.today)+'</b></span><span><small>النتائج</small><b class="num">'+num(c.results)+'</b></span><span><small>كلفة النتيجة</small><b class="num">'+cpr(c)+'</b></span></span></button>';});
+ return h+'</div>';
+}
+function kpis(){
+ var l=scope(), a=l.filter(function(c){return c.st==='active';}).length, on=S.platform==='all'?'':' على '+P[S.platform].name;
+ return '<section class="kpis" aria-label="ملخص الصرف"><div class="card kpi"><span class="lbl">صرف اليوم'+on+'</span><span class="val num">'+money(sum(l,'today'))+'</span><small>'+(a?cnt(a,'حملة واحدة نشطة','حملتان نشطتان','حملات نشطة')+' الآن':'لا توجد حملات نشطة الآن')+'</small></div><div class="card kpi"><span class="lbl">صرف هذا الشهر'+on+'</span><span class="val num">'+money(sum(l,'total'))+'</span><small>من 1 إلى 23 نوفمبر</small></div><div class="card kpi"><span class="lbl">إيداعات هذا الشهر</span><span class="val num">'+money(3500)+'</span><small>3 إيداعات + '+N('$420.00')+' مُرحّل من أكتوبر</small></div></section>';
+}
+var R={};
+R.home=function(){
+ var l=scope();
+ return balance()+pbar()+kpis()+'<section class="card"><div class="head"><h2>'+(S.platform==='all'?'كل حملاتك الإعلانية':P[S.platform].tab)+'</h2><button class="btn" type="button" data-go="campaigns">فتح صفحة الحملات</button></div>'+campTable(l)+'<p class="note" style="margin-top:12px">اضغط على أي حملة لتشوف إعلاناتها وتفاصيلها.</p></section>';
+};
+R.campaigns=function(){
+ if(S.camp) return detail(S.camp);
+ var l=scope().filter(function(c){return (S.status==='all'||c.st===S.status)&&(!S.q||c.name.indexOf(S.q)>-1);});
+ var chips='<div class="chips" role="group" aria-label="تصفية حسب الحالة">';
+ [['all','كل الحالات'],['active','نشطة'],['paused','متوقفة'],['review','قيد المراجعة']].forEach(function(s){chips+='<button type="button" data-status="'+s[0]+'" aria-pressed="'+(S.status===s[0])+'">'+s[1]+'</button>';});
+ chips+='</div>';
+ return pbar()+'<section class="card"><div class="head"><h2>'+(S.platform==='all'?'كل الحملات':P[S.platform].tab)+'</h2><small>'+cnt(l.length,'حملة واحدة','حملتان','حملات')+'</small></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px">'+chips+'<div class="field" style="flex:1 1 220px"><label for="q">بحث باسم الحملة</label><input id="q" type="search" value="'+esc(S.q)+'" autocomplete="off"></div></div><div id="list">'+campTable(l)+'</div></section>';
+};
+function detail(id){
+ var c=C.filter(function(x){return x.id===id;})[0];
+ var left=c.total, leftR=c.results, ads='';
+ c.ads.forEach(function(a,i){
+  var last=i===c.ads.length-1, sp=last?left:Math.round(c.total*a[2]*100)/100, rs=last?leftR:Math.round(c.results*a[2]);
+  left=Math.round((left-sp)*100)/100; leftR-=rs;
+  ads+='<article class="ad"><div class="ph">'+svg('img',30)+'<span>معاينة الإعلان · '+a[1]+'</span></div><div class="b"><div class="r"><b>'+a[0]+'</b>'+pill(c.st)+'</div><div class="r"><span>الصرف</span><b class="num">'+money(sp)+'</b></div><div class="r"><span>النتائج</span><b class="num">'+num(rs)+'</b></div><div class="r"><span>كلفة النتيجة</span><b class="num">'+(rs?money(sp/rs):'—')+'</b></div></div></article>';
+ });
+ var st=function(l,v){return '<div class="stat"><small>'+l+'</small><b class="num">'+v+'</b></div>';};
+ return '<button class="btn back" type="button" data-act="back">'+svg('back',18)+'رجوع إلى الحملات</button><section class="card"><div class="head"><div><h2>'+c.name+'</h2><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px">'+plat(c.p)+pill(c.st)+'</div></div></div><div class="stats">'+st('صرف اليوم',money(c.today))+st('الصرف الكلي',money(c.total))+st('الظهور',num(c.impr))+st('النقرات',num(c.clicks))+st('النتائج',num(c.results))+st('كلفة النتيجة',cpr(c))+'</div><div class="stats" style="margin-top:12px"><div class="stat"><small>هدف الحملة</small><b style="font-size:16px">'+c.goal+'</b></div><div class="stat"><small>الميزانية اليومية</small><b class="num" style="font-size:16px">'+money(c.budget)+'</b></div><div class="stat"><small>تاريخ البدء</small><b style="font-size:16px">'+c.start+'</b></div></div>'+(c.st==='review'?'<p class="note" style="margin-top:14px">هذه الحملة بانتظار موافقة المنصة، وما راح تصرف من رصيدك إلى أن تنقبل.</p>':'')+'</section><section class="card"><div class="head"><h2>إعلانات هذه الحملة</h2><small>'+cnt(c.ads.length,'إعلان واحد','إعلانان','إعلانات')+'</small></div><div class="ads">'+ads+'</div><p class="note" style="margin-top:14px">في النسخة الفعلية يظهر هنا الفيديو أو الصورة الحقيقية للإعلان من المنصة.</p></section>';
+}
+R.wallet=function(){
+ var d='';
+ deposits.forEach(function(x){d+='<div class="dep"><div class="ic" aria-hidden="true" style="color:#A85400">'+svg('down',20)+'</div><div class="mid"><b>'+x.title+'</b><small>'+esc(x.meta)+'</small></div><div class="end"><b class="num">+'+(x.iqd?Math.round(x.amt).toLocaleString('en-US')+' د.ع':money(x.amt))+'</b><span class="pill '+(x.st==='ok'?'st-active':'st-pending')+'">'+(x.st==='ok'?'مؤكّد':'بانتظار التأكيد')+'</span></div></div>';});
+ var bal=BAL, rows='';
+ moves.forEach(function(m){var dep=m[1]==='d';rows+='<tr'+(dep?' class="in"':'')+'><td style="white-space:nowrap">'+m[0]+'</td><td><b>'+(dep?'إيداع رصيد':'صرف الحملات اليومي')+'</b><br><span class="note">'+m[3]+'</span></td><td class="n"><b'+(dep?' style="color:#0B5E33"':'')+'>'+(dep?'+':'−')+money(m[2])+'</b></td><td class="n">'+money(bal)+'</td></tr>';bal=dep?bal-m[2]:bal+m[2];});
+ return '<div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn primary" type="button" data-act="deposit">'+svg('plus',18)+'طلب إيداع رصيد</button><button class="btn" type="button" data-act="statement">'+svg('down',18)+'تنزيل كشف الحساب</button></div><section class="card eq" aria-label="كيف يُحتسب رصيدك"><div class="kpi"><span class="lbl">إجمالي ما أودعته</span><span class="val num">'+money(IN)+'</span><small>3 إيداعات + رصيد مُرحّل</small></div><div class="op" aria-hidden="true">−</div><div class="kpi"><span class="lbl">إجمالي ما صُرف على الحملات</span><span class="val num">'+money(OUT)+'</span><small>يُخصم يومياً حسب صرف المنصات</small></div><div class="op" aria-hidden="true">=</div><div class="kpi res"><span class="lbl">الرصيد المتبقي</span><span class="val num">'+money(BAL)+'</span><small>يكفي تقريباً 8 أيام بالمعدل الحالي</small></div></section><div class="two"><section class="card"><div class="head"><h2>سجل الإيداعات</h2><small>نوفمبر 2026</small></div>'+d+'<p class="note" style="margin-top:12px">يُضاف الإيداع إلى رصيدك بعد أن يؤكّده فريق جولدن بيكسل.</p></section><section class="card"><div class="head"><h2>كشف الحساب اليومي</h2><small>الأحدث أولاً</small></div><div class="scroll"><table class="ledger"><thead><tr><th>التاريخ</th><th>الحركة</th><th class="n">المبلغ</th><th class="n">الرصيد بعدها</th></tr></thead><tbody>'+rows+'</tbody></table></div></section></div>';
+};
+R.reports=function(){
+ var grand=sum(C,'total'), rows='';
+ PK.map(function(k){var l=C.filter(function(c){return c.p===k;});return {k:k,t:sum(l,'total'),i:sum(l,'impr'),c:sum(l,'clicks'),r:sum(l,'results')};}).sort(function(a,b){return b.t-a.t;}).forEach(function(x){
+  var pc=(x.t/grand*100).toFixed(1);
+  rows+='<tr class="click" data-plat-go="'+x.k+'"><td><button class="link" type="button" data-plat-go="'+x.k+'">'+P[x.k].name+'</button></td><td class="n"><b>'+money(x.t)+'</b></td><td><div style="display:flex;align-items:center;gap:8px"><div class="share" style="flex:1"><i style="width:'+pc+'%;background:'+P[x.k].color+'"></i></div><span class="num">'+pc+'%</span></div></td><td class="n">'+num(x.i)+'</td><td class="n">'+num(x.c)+'</td><td class="n">'+num(x.r)+'</td><td class="n">'+(x.r?money(x.t/x.r):'—')+'</td></tr>';
+ });
+ var tr=sum(C,'results');
+ rows+='<tr><td><b>المجموع</b></td><td class="n"><b>'+money(grand)+'</b></td><td></td><td class="n"><b>'+num(sum(C,'impr'))+'</b></td><td class="n"><b>'+num(sum(C,'clicks'))+'</b></td><td class="n"><b>'+num(tr)+'</b></td><td class="n"><b>'+money(grand/tr)+'</b></td></tr>';
+ var top='';
+ C.filter(function(c){return c.results;}).sort(function(a,b){return a.total/a.results-b.total/b.results;}).slice(0,4).forEach(function(c){top+='<tr class="click" data-camp="'+c.id+'"><td><button class="link" type="button" data-camp="'+c.id+'">'+c.name+'</button></td><td>'+plat(c.p)+'</td><td class="n">'+num(c.results)+'</td><td class="n"><b>'+cpr(c)+'</b></td></tr>';});
+ return '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between"><p class="note">الفترة: 1 – 23 نوفمبر 2026</p><button class="btn" type="button" data-act="report">'+svg('down',18)+'تنزيل التقرير</button></div><section class="kpis"><div class="card kpi"><span class="lbl">إجمالي الصرف</span><span class="val num">'+money(grand)+'</span></div><div class="card kpi"><span class="lbl">إجمالي الظهور</span><span class="val num">'+num(sum(C,'impr'))+'</span></div><div class="card kpi"><span class="lbl">إجمالي النقرات</span><span class="val num">'+num(sum(C,'clicks'))+'</span></div><div class="card kpi"><span class="lbl">إجمالي النتائج</span><span class="val num">'+num(tr)+'</span></div></section><section class="card"><div class="head"><h2>الأداء حسب المنصة</h2><small>اضغط على منصة لعرض حملاتها</small></div><div class="scroll"><table style="min-width:720px"><thead><tr><th>المنصة</th><th class="n">الصرف</th><th>حصتها من الصرف</th><th class="n">الظهور</th><th class="n">النقرات</th><th class="n">النتائج</th><th class="n">كلفة النتيجة</th></tr></thead><tbody>'+rows+'</tbody></table></div></section><section class="card"><div class="head"><h2>أفضل الحملات بكلفة النتيجة</h2><small>الأقل كلفة أولاً</small></div><div class="scroll"><table style="min-width:480px"><thead><tr><th>الحملة</th><th>المنصة</th><th class="n">النتائج</th><th class="n">كلفة النتيجة</th></tr></thead><tbody>'+top+'</tbody></table></div></section>';
+};
+R.support=function(){
+ var t='';
+ tickets.forEach(function(x){t+='<div class="dep"><div class="mid"><b>'+esc(x.subject)+'</b><small>'+esc(x.body)+'</small></div><div class="end"><span class="pill st-pending">قيد المتابعة</span></div></div>';});
+ return '<div class="two"><div style="display:flex;flex-direction:column;gap:20px"><section class="card"><div class="head"><h2>تواصل مع الدعم على الواتساب</h2></div>'+wa('الرقم الأول','07730955180','9647730955180')+wa('الرقم الثاني','07748219391','9647748219391')+'</section><section class="card"><div class="head"><h2>أسئلة متكررة</h2></div><details><summary>شلون ينخصم الصرف من رصيدي؟</summary><p>كل يوم نسحب صرف حملاتك من المنصات ونخصمه من رصيدك المودع عندنا، وتشوف كل خصم بكشف الحساب اليومي.</p></details><details><summary>متى يظهر الإيداع برصيدي؟</summary><p>بعد أن يؤكّده فريق جولدن بيكسل، وهذا ياخذ تقريباً 5 دقائق من تسجيل الطلب.</p></details><details><summary>ليش إعلاني «قيد المراجعة»؟</summary><p>كل منصة تراجع الإعلان قبل نشره. خلال المراجعة الإعلان ما يصرف من رصيدك.</p></details><details><summary>شنو يصير إذا خلص رصيدي؟</summary><p>تتوقف إعلاناتك، وترجع تشتغل بعد ما تودع رصيد جديد ويتأكد.</p></details></section></div><div style="display:flex;flex-direction:column;gap:20px"><section class="card"><div class="head"><h2>طلب جديد</h2></div><form id="ticket" style="display:flex;flex-direction:column;gap:14px"><div class="field"><label for="tSubj">نوع الطلب</label><select id="tSubj"><option>استفسار عن حملة</option><option>استفسار عن الرصيد أو إيداع</option><option>طلب حملة جديدة</option><option>مشكلة أخرى</option></select></div><div class="field"><label for="tBody">تفاصيل الطلب</label><textarea id="tBody"></textarea></div><p class="err" id="tErr" role="alert"></p><button class="btn primary" type="submit" style="align-self:flex-start">تسجيل الطلب</button></form></section><section class="card"><div class="head"><h2>طلباتك السابقة</h2></div>'+(t||'<p class="empty">ما عندك طلبات لحد الآن. أي طلب تسجله يظهر هنا مع حالته.</p>')+'</section></div></div>';
+};
+
+var view=document.getElementById('view'), toastEl=document.getElementById('toast'), overlay=document.getElementById('overlay'), modal=document.getElementById('modal'), notif=document.getElementById('notif'), bell=document.getElementById('bell'), zoom=document.getElementById('zoom'), tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('open');clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove('open');},3600);}
+function navs(){
+ var s='',b='';
+ Object.keys(VIEWS).forEach(function(k){
+  var cur=S.view===k?' aria-current="page"':'';
+  s+='<button type="button" data-go="'+k+'"'+cur+'>'+svg(VIEWS[k][1])+VIEWS[k][0]+'</button>';
+  if(k==='campaigns'){s+='<div class="subnav nav" role="group" aria-label="إعلاناتك حسب المنصة">';['all'].concat(PK).forEach(function(p){s+='<button type="button" data-plat-go="'+p+'" aria-pressed="'+(S.view==='campaigns'&&S.platform===p)+'">'+(p==='all'?svg('grid',18):slot(p))+(p==='all'?'كل المنصات':P[p].tab)+'</button>';});s+='</div>';}
+  b+='<button type="button" data-go="'+k+'"'+cur+'>'+svg(VIEWS[k][1],22)+SHORT[k]+'</button>';
+ });
+ document.getElementById('sideNav').innerHTML=s;document.getElementById('bottomNav').innerHTML=b;
+}
+function render(keep){
+ navs();
+ document.getElementById('pageTitle').textContent=S.view==='home'?'مرحباً، [اسم العميل]':VIEWS[S.view][0];
+ document.getElementById('pageSub').textContent={home:'هذه خلاصة إعلاناتك ورصيدك · آخر تحديث اليوم 10:30 ص',campaigns:'كل حملاتك وإعلاناتك على المنصات الأربع',wallet:'كل ما أودعته، وكل ما صُرف منه على حملاتك، يوماً بيوم',reports:'ملخص أداء إعلاناتك لهذا الشهر',support:'تواصل مع فريق جولدن بيكسل وتابع طلباتك'}[S.view];
+ view.innerHTML=R[S.view]();
+ if(!keep) window.scrollTo(0,0);
+}
+function go(v,opt){S.view=v;S.camp=null;if(opt){for(var k in opt)S[k]=opt[k];}try{if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);}catch(e){}render();}
+function wa(l,n,intl){return '<div class="wa">'+kv(l,n)+'<a class="btn wabtn" href="https://wa.me/'+intl+'" target="_blank" rel="noopener">فتح محادثة واتساب</a></div>';}
+function kv(l,v){return '<div class="kv"><span>'+l+'</span><b class="num">'+v+'</b><button type="button" class="btn sm" data-copy="'+v+'">نسخ</button></div>';}
+function wayInfo(w){
+ if(w==='سوبر كي') return '<b>تفاصيل التحويل عبر سوبر كي</b>'+kv('رقم البطاقة','910302564505')+kv('رقم الهاتف','07730955180')+'<div class="qrbox"><span>الباركود</span><button type="button" class="qr" data-act="zoom" aria-label="تكبير الباركود"><img src="qi-qr.png" alt="باركود سوبر كي باسم حامد قيس"></button><small>اضغط على الباركود لتكبيره</small></div>';
+ if(w==='FIB') return '<b>تفاصيل التحويل عبر FIB — المصرف العراقي الأول</b><div class="qrbox"><span>الباركود</span><button type="button" class="qr" data-act="zoom" aria-label="تكبير الباركود"><img src="fib-qr.png" alt="باركود FIB ورمزه PLZA-3OZB-DLBG"></button><small>اضغط على الباركود لتكبيره</small></div>';
+ if(w==='نيو') return '<b>تفاصيل التحويل عبر نيو</b>'+kv('رقم البطاقة','4604-1599-1900-1135');
+ return '';
+}
+function openDeposit(){
+ modal.innerHTML='<h2 id="mTitle">طلب إيداع رصيد</h2><p class="note">اختر طريقة الدفع، حوّل المبلغ على التفاصيل الظاهرة، ثم سجّل المبلغ وارفع صورة الحوالة. يضاف لرصيدك بعد تأكيد فريق جولدن بيكسل.</p><form id="depForm" style="display:flex;flex-direction:column;gap:14px"><fieldset class="ways"><legend>طريقة الدفع</legend><div class="wrow"><label class="way qi"><input type="radio" name="way" value="سوبر كي" checked><span>سوبر كي</span></label><label class="way neo"><input type="radio" name="way" value="نيو"><span>نيو</span></label><label class="way fib"><input type="radio" name="way" value="FIB"><span>FIB</span></label><label class="way zain off"><input type="radio" name="way" value="زين كاش" disabled><span>زين كاش<small>قريباً</small></span></label></div></fieldset><div id="wayInfo" class="wayinfo" aria-live="polite">'+wayInfo('سوبر كي')+'</div><div class="field"><label for="dAmt">المبلغ بالدينار العراقي</label><input id="dAmt" type="number" min="1" step="1" inputmode="numeric" dir="ltr" aria-describedby="dHint"><small id="dHint" class="note">يتحوّل إلى الدولار برصيدك عند التأكيد حسب سعر الصرف المعتمد: [سعر الصرف]</small></div><div class="field"><label for="dFile">صورة الحوالة</label><input id="dFile" type="file" accept="image/*"><img id="dPrev" alt="معاينة صورة الحوالة" style="display:none;max-width:100%;max-height:180px;border-radius:10px;border:1px solid #E3E5EA;object-fit:contain"></div><p class="err" id="dErr" role="alert"></p><div class="acts"><button class="btn primary" type="submit">تسجيل الطلب</button><button class="btn" type="button" data-act="close">إلغاء</button></div></form>';
+ overlay.classList.add('open');modal.scrollTop=0;
+}
+function closeModal(){overlay.classList.remove('open');}
+
+document.addEventListener('click',function(e){
+ var t=e.target.closest('[data-go],[data-plat],[data-plat-go],[data-camp],[data-status],[data-act],[data-copy]');
+ if(!e.target.closest('#bell')&&!e.target.closest('#notif')){notif.classList.remove('open');bell.setAttribute('aria-expanded','false');}
+ if(e.target===overlay){closeModal();return;}
+ if(e.target===zoom){zoom.classList.remove('open');return;}
+ if(!t)return;
+ var d=t.dataset;
+ if(d.copy){var v=d.copy;try{navigator.clipboard.writeText(v).then(function(){toast('تم نسخ الرقم: '+v);},function(){toast('ما گدرنا ننسخ تلقائياً، انسخ الرقم يدوياً: '+v);});}catch(x){toast('انسخ الرقم يدوياً: '+v);}}
+ else if(d.act==='zoom'){var qi=t.querySelector('img'),zi=zoom.querySelector('img');zi.src=qi.getAttribute('src');zi.alt=qi.alt;zoom.classList.add('open');}
+ else if(d.act==='zoomclose'){zoom.classList.remove('open');}
+ else if(d.go){notif.classList.remove('open');go(d.go);}
+ else if(d.platGo){go('campaigns',{platform:d.platGo,status:'all',q:''});}
+ else if(d.plat){S.platform=d.plat;render(true);}
+ else if(d.camp){notif.classList.remove('open');S.view='campaigns';S.camp=+d.camp;render();}
+ else if(d.status){S.status=d.status;render(true);}
+ else if(d.act==='back'){S.camp=null;render();}
+ else if(d.act==='deposit'){openDeposit();}
+ else if(d.act==='close'){closeModal();}
+ else if(d.act==='statement'){toast('في النسخة الفعلية ينزل كشف الحساب كملف PDF.');}
+ else if(d.act==='report'){toast('في النسخة الفعلية ينزل التقرير كملف PDF.');}
+});
+bell.addEventListener('click',function(){var o=notif.classList.toggle('open');bell.setAttribute('aria-expanded',o);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(zoom.classList.contains('open')){zoom.classList.remove('open');return;}closeModal();notif.classList.remove('open');}});
+document.addEventListener('change',function(e){
+ if(e.target.name==='way'){document.getElementById('wayInfo').innerHTML=wayInfo(e.target.value);}
+ if(e.target.id==='dFile'){var pv=document.getElementById('dPrev'),f=e.target.files&&e.target.files[0];if(f){document.getElementById('dErr').textContent='';try{pv.src=URL.createObjectURL(f);pv.style.display='block';}catch(x){}}else{pv.style.display='none';}}
+});
+document.addEventListener('input',function(e){
+ if(e.target.id==='q'){S.q=e.target.value.trim();var l=scope().filter(function(c){return (S.status==='all'||c.st===S.status)&&(!S.q||c.name.indexOf(S.q)>-1);});document.getElementById('list').innerHTML=campTable(l);}
+});
+document.addEventListener('submit',function(e){
+ e.preventDefault();
+ if(e.target.id==='depForm'){
+  var a=parseFloat(document.getElementById('dAmt').value);
+  if(!(a>0)){document.getElementById('dErr').textContent='اكتب مبلغ الإيداع بالدينار وبالأرقام، مثال: 150000';document.getElementById('dAmt').focus();return;}
+  var f=document.getElementById('dFile').files;
+  if(!f||!f.length){document.getElementById('dErr').textContent='ارفع صورة الحوالة حتى نگدر نأكد الإيداع.';document.getElementById('dFile').focus();return;}
+  deposits.unshift({title:'طلب إيداع',meta:'23 نوفمبر · '+document.querySelector('input[name=way]:checked').value+' · صورة الحوالة مرفقة',amt:a,iqd:true,st:'wait'});
+  closeModal();go('wallet');toast('تسجّل الطلب بالنموذج، ويظهر بسجل الإيداعات «بانتظار التأكيد».');
+ }
+ if(e.target.id==='ticket'){
+  var b=document.getElementById('tBody').value.trim();
+  if(!b){document.getElementById('tErr').textContent='اكتب تفاصيل طلبك حتى نگدر نساعدك.';document.getElementById('tBody').focus();return;}
+  tickets.unshift({subject:document.getElementById('tSubj').value,body:b});render(true);toast('تسجّل طلبك بالنموذج، ويظهر تحت «طلباتك السابقة».');
+ }
+});
+function fromHash(){var h=(location.hash||'').replace('#','');if(VIEWS[h]&&h!==S.view){S.view=h;S.camp=null;render();}}
+window.addEventListener('hashchange',fromHash);
+var h0=(location.hash||'').replace('#','');if(VIEWS[h0])S.view=h0;
+render();
+})();
+</script>
+</body>
+</html>
