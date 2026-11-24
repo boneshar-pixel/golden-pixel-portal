@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بوابة المروّجين — جولدن بيكسل (نموذج تفاعلي)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#F3F4F6;--card:#FFFFFF;--ink:#1C1D21;--ink2:#3A3D45;--muted:#5A5E68;--line:#E3E5EA;--line2:#ECEEF2;--orange:#F28A0A;--orange-ink:#A85400;--tint:#FFF1DC;--ok-bg:#E1F3E8;--ok:#0B5E33;--warn-bg:#FFF1DC;--warn:#8A4600}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic',system-ui,'Segoe UI',Tahoma,sans-serif;font-size:15px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+a{color:var(--orange-ink)}
+.num{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.app{display:flex;min-height:100vh}
+.side{width:264px;flex:none;background:var(--card);border-inline-end:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px}
+.brand img{width:44px;height:44px;object-fit:contain}
+.brand b{display:block;font-size:17px;line-height:1.3}
+.brand span{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:3px}
+.nav button{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border:none;background:transparent;border-radius:10px;font-weight:500;color:var(--ink2);text-align:right;width:100%}
+.nav button:hover{background:var(--bg)}
+.nav button[aria-current="page"]{background:var(--tint);color:var(--ink);font-weight:700}
+.nav button[aria-current="page"] svg{stroke:var(--orange-ink)}
+.subnav{display:flex;flex-direction:column;gap:2px;padding-inline-start:20px}
+.subnav button{min-height:44px;font-size:14px}
+.subnav button[aria-pressed="true"]{background:var(--tint);font-weight:700;color:var(--ink)}
+.logo{display:inline-flex;align-items:center;gap:4px;flex:none;background:#fff;border-radius:8px;padding:3px 4px;box-shadow:0 0 0 1px var(--line)}
+.logo img{height:22px;width:auto;display:block;border-radius:5px}
+.logo.s{padding:2px 3px;border-radius:6px}.logo.s img{height:16px;border-radius:4px}
+.manager{margin-top:auto;background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.manager small{color:var(--muted);font-size:12px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:22px 32px 0}
+.top .who{display:flex;align-items:center;gap:12px}
+.top .who img{display:none;width:38px;height:38px;object-fit:contain}
+.top h1{font-size:24px;line-height:1.3}
+.top p{color:var(--muted);font-size:14px}
+.tools{display:flex;align-items:center;gap:10px;position:relative}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 16px;border-radius:10px;border:1px solid #D5D8DF;background:var(--card);font-weight:600;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--bg)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:var(--ink);font-weight:700}
+.btn.primary:hover{background:#FF9A1F}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.icon{width:46px;padding:0;position:relative}
+.dot{position:absolute;top:9px;inset-inline-end:10px;width:9px;height:9px;border-radius:50%;background:var(--orange);border:2px solid #fff}
+.notif{position:absolute;top:54px;inset-inline-end:0;width:min(340px,86vw);background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.14);padding:8px;z-index:20;display:none}
+.notif.open{display:block}
+.notif button{display:block;width:100%;text-align:right;border:none;background:transparent;border-radius:10px;padding:12px;min-height:44px}
+.notif button:hover{background:var(--bg)}
+.notif small{display:block;color:var(--muted);font-size:12px}
+#view{padding:22px 32px 48px;display:flex;flex-direction:column;gap:20px;max-width:1280px;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.balance{background:var(--ink);color:#fff;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:16px}
+.balance .row{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px}
+.balance .lbl{font-size:14px;color:#C9CCD3}
+.balance .big{font-size:44px;font-weight:700;line-height:1.15;display:block;text-align:right}
+.bar{height:10px;background:#3A3C44;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--orange);border-radius:99px}
+.balance .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:14px;color:#C9CCD3}
+.balance .foot b{color:#fff}.balance .foot .hot{color:#FFB454}
+.pbar{display:flex;flex-wrap:wrap;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px}
+.pbar button{flex:1 1 170px;display:flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 12px;border:none;border-radius:10px;background:transparent;font-weight:600;white-space:nowrap}
+.pbar button:hover{background:var(--bg)}
+.pbar button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.pbar small{font-weight:500;font-size:13px}
+.pbar .sm{display:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.kpi{display:flex;flex-direction:column;gap:4px}
+.kpi .lbl{font-size:14px;color:var(--muted)}
+.kpi .val{font-size:28px;font-weight:700;text-align:right;display:block}
+.kpi small{color:var(--muted);font-size:13px}
+.head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.head h2{font-size:18px}
+.head small{color:var(--muted);font-size:13px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:13px;font-weight:600;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+td{padding:14px 12px;border-bottom:1px solid var(--line2)}
+th.n,td.n{text-align:left}
+td.n{direction:ltr;white-space:nowrap}
+.ledger{min-width:480px}
+tr.click{cursor:pointer}
+tr.click:hover td{background:#FAFAFB}
+.link{border:none;background:none;padding:0;font-weight:700;text-align:right;color:var(--ink);text-decoration:underline;text-decoration-color:#C9CCD3;text-underline-offset:4px;min-height:32px}
+.link:hover{color:var(--orange-ink)}
+.plat{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.sq{width:10px;height:10px;border-radius:3px;flex:none}
+.pill{display:inline-block;padding:3px 12px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap}
+.st-active{background:var(--ok-bg);color:var(--ok)}
+.st-paused{background:var(--line2);color:var(--ink2)}
+.st-review,.st-pending{background:var(--warn-bg);color:var(--warn)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:44px;padding:0 16px;border-radius:99px;border:1px solid #D5D8DF;background:var(--card);font-weight:600}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:600}
+.field input,.field select,.field textarea{min-height:46px;border:1px solid #C3C7D0;border-radius:10px;padding:10px 12px;background:#fff;width:100%}
+.field textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid #F9B55A;outline-offset:2px}
+.cards{display:none;flex-direction:column;gap:10px}
+.ccard{display:block;width:100%;text-align:right;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ccard .t{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.ccard .g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--line2);margin-top:10px;padding-top:10px}
+.ccard .g small{display:block;color:var(--muted);font-size:12px}
+.ccard .g b{display:block;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--bg);border-radius:12px;padding:14px}
+.stat small{display:block;color:var(--muted);font-size:13px}
+.stat b{font-size:20px;display:block;text-align:right}
+.ads{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.ad{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.ad .ph{height:170px;background:repeating-linear-gradient(135deg,#ECEEF2 0 12px,#F6F7F9 12px 24px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:13px;font-weight:600}
+.ad .b{padding:14px;display:flex;flex-direction:column;gap:8px}
+.ad .r{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.eq{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px}
+.eq>div{flex:1 1 180px}
+.eq .op{flex:none;display:flex;align-items:center;font-size:30px;color:var(--muted)}
+.eq .res{background:var(--ink);color:#fff;border-radius:12px;padding:16px 20px}
+.eq .res .val{color:#FFB454}.eq .res .lbl,.eq .res small{color:#C9CCD3}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:20px;align-items:start}
+.dep{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line2)}
+.dep .ic{width:42px;height:42px;flex:none;border-radius:10px;background:var(--tint);display:flex;align-items:center;justify-content:center}
+.dep .mid{flex:1;min-width:0}
+.dep small{display:block;color:var(--muted);font-size:13px}
+.dep .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+tr.in td{background:#F1F9F4}
+.share{height:8px;background:var(--line2);border-radius:99px;overflow:hidden;min-width:90px}
+.share i{display:block;height:100%;border-radius:99px}
+details{border-bottom:1px solid var(--line2)}
+summary{min-height:50px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+details p{color:var(--ink2);padding-bottom:14px}
+.note{font-size:13px;color:var(--muted)}
+.empty{color:var(--muted);padding:18px 0}
+.back{align-self:flex-start}
+.overlay{position:fixed;inset:0;background:rgba(20,21,24,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:16px;padding:24px;width:min(460px,100%);display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow:auto}
+.modal .acts{display:flex;gap:10px;justify-content:flex-start;flex-wrap:wrap}
+.ways{border:none;padding:0;margin:0;min-width:0}
+.ways legend{font-size:14px;font-weight:600;padding:0;margin-bottom:6px}
+.wrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.way{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;padding:10px 6px;border:2px solid transparent;border-radius:12px;font-weight:700;text-align:center;cursor:pointer;color:var(--ink)}
+.way.qi{background:#FFD400}.way.fib{background:#77BDA5}.way.neo{background:#E6DBFF}.way.zain{background:#4B1D8F;color:#fff}
+.way:has(input:checked){border-color:var(--ink);box-shadow:0 0 0 2px #fff inset}
+.way.off{cursor:not-allowed}
+.way input{width:18px;height:18px;accent-color:#1C1D21;margin:0}
+.way small{display:block;font-size:12px;font-weight:600;background:#fff;color:#1C1D21;border-radius:99px;padding:1px 10px;margin-top:4px}
+.wayinfo{background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.wayinfo:empty{display:none}
+.kv{display:flex;align-items:center;gap:8px}
+.kv span{color:var(--muted);font-size:13px;flex:0 0 68px}
+.kv b{flex:1;min-width:0;font-size:15px;text-align:right;white-space:nowrap}
+.wa{display:flex;flex-direction:column;gap:10px;padding:14px 0;border-top:1px solid var(--line2)}
+.wa:first-of-type{border-top:none;padding-top:0}
+.btn.wabtn{background:#25D366;border-color:#25D366;color:#10241A;font-weight:700}
+.btn.wabtn:hover{background:#1FC15B}
+.btn.sm{min-height:44px;padding:0 14px;font-size:14px}
+.qrbox{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.qrbox>span{color:var(--muted);font-size:14px}
+.qrbox small{color:var(--muted);font-size:12px}
+.qr{border:1px solid var(--line);background:#fff;border-radius:12px;padding:6px;cursor:zoom-in}
+.qr img{display:block;width:132px;height:auto}
+.zoombox{background:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center;max-width:min(460px,100%)}
+.zoombox img{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block}
+.err{color:#A1260D;font-size:14px;font-weight:600;min-height:20px}
+.toast{position:fixed;bottom:24px;inset-inline-start:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;z-index:60;max-width:90vw;display:none;font-weight:500}
+.toast.open{display:block}
+.bottom{display:none}
+.proto{background:var(--tint);color:var(--warn);font-size:13px;font-weight:600;text-align:center;padding:6px 12px}
+@media (max-width:860px){
+ .side{display:none}
+ .wrow{gap:6px}.way{font-size:13px;padding:8px 2px}.modal{padding:18px}
+ .top{padding:14px 16px 0;flex-wrap:nowrap;align-items:flex-start}.top .who{flex:1;min-width:0}.ledger{min-width:0;font-size:13px}.ledger th,.ledger td{padding:10px 5px}.top h1{font-size:19px}.top .who img{display:block}.top .period{display:none}
+ #view{padding:16px 16px 100px;gap:14px}
+ .balance{padding:20px}.balance .big{font-size:36px}.balance .row .btn{width:100%}
+ .pbar{border:none;background:transparent;padding:0}
+ .pbar button{flex:1 1 auto;min-height:46px;border:1px solid #D5D8DF;background:var(--card);border-radius:99px}
+ .pbar button[aria-pressed="true"]{border-color:var(--ink)}.pbar .lg,.pbar small{display:none}.pbar .sm{display:inline}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi .val{font-size:21px}.card{padding:16px}
+ .tbl{display:none}.cards{display:flex}
+ .two{grid-template-columns:minmax(0,1fr)}
+ .eq .op{display:none}
+ .bottom{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;bottom:0;inset-inline:0;background:var(--card);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px));z-index:30}
+ .bottom button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;border:none;background:none;font-size:11.5px;font-weight:500;color:var(--ink2)}
+ .bottom button[aria-current="page"]{color:var(--orange-ink);font-weight:700}
+ .toast{bottom:84px}
+}
+
+.tm{white-space:nowrap}
+.st-info{background:#E3ECFF;color:#1B3F99}.st-bad{background:#FDE7E2;color:#A1260D}
+.plat-note{margin-top:auto;display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:12px;font-size:13px;font-weight:600;color:var(--ink2)}
+.walletchip b{margin-inline-start:4px}
+.alerts{border-color:#F3C98B;background:#FFFAF1}
+.alerts h2{display:flex;align-items:center;gap:8px;color:var(--warn)}
+.al{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid #F5E2C4}
+.al>span{flex:1 1 240px}
+.dep .btn.sm{flex:none}
+.sim{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.sim>div{flex:1 1 260px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.three.two-f{grid-template-columns:repeat(2,minmax(0,1fr));max-width:640px}
+.say{background:var(--bg);border-radius:10px;padding:12px 14px;margin:14px 0 0;color:var(--ink2)}
+.ac .err{margin-top:8px}
+.ac>.btn{margin-top:4px}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;min-height:44px;font-weight:600}
+.sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sw .tr{width:52px;height:30px;border-radius:99px;background:#B9BDC7;position:relative;transition:background .15s;flex:none}
+.sw .tr::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:inset-inline-start .15s}
+.sw input:checked+.tr{background:#0B8A4A}
+.sw input:checked+.tr::after{inset-inline-start:25px}
+.sw input:focus-visible+.tr{outline:3px solid #F9B55A;outline-offset:2px}
+.sw input:disabled+.tr{opacity:.5}
+.steps{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:8px;color:var(--ink2)}
+.pick{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 12px;border:1px solid #C3C7D0;border-radius:10px;cursor:pointer;background:#fff}
+.pick:has(input:checked){border-color:var(--orange);background:var(--tint)}
+.pick input{width:20px;height:20px;accent-color:#A85400;margin:0;flex:none}
+.pick>span:not(.pill){flex:1}
+.pick small{display:block;color:var(--muted);font-size:13px}
+.notif button span{display:block}
+.modal .chips button{min-height:44px}
+@media (max-width:860px){
+ .three{grid-template-columns:minmax(0,1fr)}
+ .tm{white-space:normal;font-size:12px;min-width:64px}.ledger .pill{font-size:12px;padding:2px 8px}
+ .bottom.six{grid-template-columns:repeat(6,minmax(0,1fr))}
+ .bottom.six button{font-size:10.5px}
+}
+
+/* ---- هوية أرقى: فحمي + ذهبي، بطاقة محفظة بنقشة بكسل ---- */
+:root{--bg:#F5F6F8;--ink:#23242A;--ink2:#3B3D46;--line:#E6E7EB;--line2:#EEEFF2;--tint:#FCEBCF}
+body{font-variant-numeric:tabular-nums}
+h1,h2,.val,.brand b,.wcard .amt,.figs dd,.stat b{font-family:'Alexandria','IBM Plex Sans Arabic',system-ui,sans-serif}
+.proto{background:#2F3138;color:#F2D3A2;font-weight:500;letter-spacing:0}
+.side{background:var(--ink);border:none;color:#fff;padding:26px 16px}
+.brand img{width:48px;height:48px;background:#fff;border-radius:13px;padding:6px}
+.brand b{font-weight:600;font-size:16px}.brand span{color:#A9ADB8}
+.nav{gap:4px}
+.nav button{color:#C4C7D0;min-height:48px;border-radius:12px}
+.nav button:hover{background:#30323A;color:#fff}
+.nav button[aria-current="page"]{background:#30323A;color:#fff;font-weight:600}
+.nav button[aria-current="page"] svg{stroke:var(--orange)}
+.plat-note{background:#30323A;color:#E3E5EA}
+.plat-note .logo{box-shadow:none}
+.top{padding-top:28px}
+.top h1{font-size:26px;font-weight:600}
+#view{gap:24px;padding-top:26px}
+.card{border-radius:18px;padding:26px}
+.head{margin-bottom:18px}
+.head h2{font-size:18px;font-weight:600}
+.btn{border-radius:12px;font-weight:600}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.primary:hover{background:#34363F}
+.btn.gold{background:var(--orange);border-color:var(--orange);color:#23242A;font-weight:700}
+.btn.gold:hover{background:#FF9A1F}
+.btn.sm.primary{background:var(--ink)}
+.link{text-decoration-color:#D5D8DF}
+.pill{font-weight:600;padding:3px 11px}
+th{font-weight:500}
+.hero{display:grid;grid-template-columns:minmax(320px,430px) minmax(0,1fr);gap:24px;align-items:stretch}
+.wcard{position:relative;overflow:hidden;background:var(--ink);color:#fff;border-radius:22px;padding:26px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between;isolation:isolate}
+.wcard .px{position:absolute;inset-block:0;inset-inline-end:0;width:62%;display:grid;grid-template-columns:repeat(9,1fr);grid-auto-rows:1fr;gap:3px;padding:10px;z-index:-1;-webkit-mask-image:linear-gradient(to left,transparent 8%,#000 95%);mask-image:linear-gradient(to left,transparent 8%,#000 95%)}
+.wcard .px i{border-radius:3px;background:var(--orange)}
+.wtop,.wbot{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:#C9CCD3}
+.wtop b{font-family:'Alexandria',sans-serif;font-weight:600;font-size:12px;letter-spacing:.14em;color:#fff;direction:ltr}
+.wmid small{display:block;font-size:13px;color:#C9CCD3;margin-bottom:4px}
+.wcard .amt{display:block;font-size:42px;font-weight:600;line-height:1.1;text-align:right}
+.wbot b{color:#fff;font-weight:600;font-size:14px}
+.hpanel{display:flex;flex-direction:column;justify-content:space-between;gap:20px}
+.figs{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
+.figs div{padding:12px 0;border-bottom:1px solid var(--line2)}
+.figs dt{font-size:13px;color:var(--muted)}
+.figs dd{margin:2px 0 0;font-size:22px;font-weight:600;text-align:right;direction:ltr}
+.hacts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hacts .note{margin-inline-start:auto}
+.meter{position:relative;height:6px;border-radius:99px;background:var(--line2);margin-top:8px;max-width:240px}
+.meter i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:99px;background:var(--ink)}
+.meter.low i{background:#C4570B}
+.meter u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--orange);border-radius:2px}
+.dep{padding:16px 0}
+.alerts{background:#FFF9EF;border-color:#F1D4A4}
+.stat{border-radius:14px;padding:16px}
+.stat b{font-weight:600}
+.eq .res{border-radius:14px}
+.say{border-radius:12px}
+.field input,.field select,.field textarea{border-radius:12px;border-color:#CDD0D8}
+.modal{border-radius:22px;padding:28px}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.sw input:checked+.tr{background:var(--ink)}
+.sw input:checked+.tr::after{background:var(--orange)}
+.sim{border-radius:18px}
+.bottom button[aria-current="page"]{color:var(--ink)}
+.bottom button[aria-current="page"] svg{stroke:var(--orange-ink)}
+@media (max-width:860px){
+ .hero{grid-template-columns:minmax(0,1fr);gap:14px}
+ .wcard{min-height:210px;padding:22px}.wcard .amt{font-size:36px}
+ .figs{gap:0 16px}.figs dd{font-size:18px}
+ .hacts .btn{flex:1 1 100%}.hacts .note{margin:0}
+ .card{padding:18px;border-radius:16px}.modal{padding:20px}
+ .top h1{font-size:20px}
+ #view{gap:16px}
+}
+
+/* ---- v3: واجهة أهدأ وأوسع — رصيد بالقائمة، بطاقات بلا حدود، جدول حسابات ---- */
+body{font-size:16px;background:#F3F4F7}
+.app{background:#F3F4F7}
+.side{width:272px;padding:34px 18px 24px;gap:26px;border-radius:40px 0 0 40px;background:#1F2026}
+.brand{padding:0 8px 22px;border-bottom:1px solid #34363F}
+.brand img{width:52px;height:52px;border-radius:15px}
+.brand b{font-size:18px}.brand span{font-size:13px}
+.sbal{padding:0 10px;display:flex;flex-direction:column;gap:6px}
+.sbal>span{font-size:15px;color:#B4B8C3}
+.sbal>div{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sbal b{font-family:'Alexandria','IBM Plex Sans Arabic',sans-serif;font-size:28px;font-weight:600;color:#fff}
+.plus{width:44px;height:44px;flex:none;border-radius:50%;border:none;background:var(--orange);color:#1F2026;display:flex;align-items:center;justify-content:center}
+.plus:hover{background:#FF9A1F}
+.nav{gap:6px}
+.nav button{min-height:58px;padding:0 18px;gap:16px;font-size:17px;border-radius:16px;color:#D3D6DE;font-weight:500}
+.nav button svg{width:24px;height:24px}
+.nav button:hover{background:#2B2D35}
+.nav button[aria-current="page"]{background:#3A3C46;color:#fff;font-weight:600}
+.plat-note{border-radius:16px;padding:14px}
+.top{padding:40px 44px 0}
+.top h1{font-size:32px;font-weight:600}
+.top p{font-size:15px;margin-top:2px}
+.user{display:inline-flex;align-items:center;gap:12px;font-size:17px;font-weight:500;color:var(--ink)}
+.user .av{width:44px;height:44px;border-radius:50%;background:#E3E5EB;display:flex;align-items:center;justify-content:center;color:#6B6F7B}
+.btn.icon{border:none;background:#fff;border-radius:50%}
+#view{padding:34px 44px 60px;gap:28px;max-width:1500px}
+.card{border:none;border-radius:28px;padding:34px}
+.head{margin-bottom:22px}
+.head h2{font-size:21px}
+.btn{border-radius:99px;min-height:50px;padding:0 24px;font-size:16px}
+.btn.sm{min-height:44px;padding:0 20px;font-size:15px;border-radius:99px}
+.ov{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.ov span{display:block;font-size:17px;color:var(--muted)}
+.ov b{display:block;margin-top:6px;font-family:'Alexandria','IBM Plex Sans Arabic',sans-serif;font-size:40px;font-weight:600;line-height:1.2;text-align:right;direction:ltr}
+.ov b small{font-size:17px;font-weight:500;color:var(--ink)}
+.ov .hot{color:#C2410C}
+.ov em{font-style:normal;font-size:17px;font-weight:500;color:var(--ink);font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;unicode-bidi:isolate}
+table{font-size:16px}
+thead th{background:#F6F7F9;border:none;padding:18px 16px;font-size:15px;font-weight:500;color:var(--ink2)}
+thead th:first-child{border-radius:0 14px 14px 0}thead th:last-child{border-radius:14px 0 0 14px}
+td{padding:22px 14px;border-bottom:1px solid #EEEFF2}
+.acct{display:flex;align-items:center;gap:16px}
+.atile{width:54px;height:54px;flex:none;border-radius:16px;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center}
+.acct .link{font-size:17px;text-decoration-color:var(--ink);text-underline-offset:5px}
+.acct-t{min-width:820px}.acct-t th,.acct-t td{padding-inline:7px}.acct-t .btn.sm{padding:0 16px}.acct-t td:first-child,.acct-t th:first-child{padding-inline-start:12px}.acct-t .atile{width:48px;height:48px;border-radius:14px}.acct-t .acct{gap:12px}
+.an{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.acct small{display:block;color:var(--muted);font-size:15px;margin-top:4px;direction:ltr;text-align:right}
+td .sw .swl{display:none}
+.alerts{background:#FFF6E8;padding:22px 30px;border-radius:22px}
+.alerts .head{margin-bottom:6px}
+.al{border-top-color:#F3DDB8}
+.sim{border:1.5px dashed #C3C7D0;border-radius:24px;padding:24px 30px}
+.modal{border-radius:28px;padding:32px}
+.field input,.field select,.field textarea{border-radius:14px;min-height:50px}
+.chips button{min-height:46px;padding:0 20px}
+.stat{border-radius:18px;padding:20px}
+.mbal{display:none}
+.mbalwrap{display:none}
+@media (max-width:860px){
+ body{font-size:15px}
+ .top{padding:18px 16px 0}.top h1{font-size:22px}.user b{display:none}
+ #view{padding:16px 16px 100px;gap:16px}
+ .card{padding:20px;border-radius:22px}
+ .mbalwrap{display:block}
+ .mbal{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#1F2026;color:#fff;border-radius:22px;padding:18px 20px}
+ .mbal span{display:block;font-size:13px;color:#B4B8C3}
+ .mbal b{font-family:'Alexandria','IBM Plex Sans Arabic',sans-serif;font-size:26px;font-weight:600}
+ .ov{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.ov span{font-size:14px}.ov b{font-size:26px}.ov b small,.ov em{font-size:13px}
+ .btn{min-height:48px;padding:0 18px;font-size:15px}
+ .ccard{border:none;background:#F6F7F9;border-radius:18px;padding:16px}
+ .atile{width:46px;height:46px;border-radius:14px}
+ .alerts{padding:18px 20px}
+ table{font-size:14px}td{padding:14px 8px}thead th{padding:12px 8px;font-size:13px}
+}
+
+/* ---- v4: خط أصغر + لغتين ---- */
+body{font-size:14px}
+.mform{display:flex;flex-direction:column;gap:14px}
+.side{width:248px;padding:28px 16px 22px;gap:22px}
+.brand{padding:0 6px 18px}.brand img{width:44px;height:44px;border-radius:13px}.brand b{font-size:15px}.brand span{font-size:12px}
+.sbal>span{font-size:12.5px}.sbal b{font-size:22px}.plus{width:38px;height:38px}
+.nav button{min-height:46px;padding:0 14px;gap:12px;font-size:14px;border-radius:13px}
+.nav button svg{width:20px;height:20px}
+.plat-note{font-size:12px;padding:12px}
+.top{padding:30px 36px 0}.top h1{font-size:24px}.top p{font-size:13px}
+.user{font-size:14px;gap:10px}.user .av{width:38px;height:38px}
+.btn.icon{width:40px;min-height:40px;height:40px}
+#view{padding:26px 36px 52px;gap:22px}
+.card{padding:26px;border-radius:24px}
+.head{margin-bottom:18px}.head h2{font-size:16.5px}.head small{font-size:12.5px}
+.btn{min-height:44px;padding:0 20px;font-size:14px}
+.btn.sm{min-height:38px;padding:0 16px;font-size:13px}
+.ov{gap:22px}.ov span{font-size:13.5px}.ov b{font-size:28px;margin-top:4px}.ov b small,.ov em{font-size:13.5px}
+table{font-size:14px}
+thead th{padding:14px 14px;font-size:12.5px}
+td{padding:16px 14px}
+.acct .link{font-size:14.5px}.acct small{font-size:12.5px;margin-top:2px}
+.acct-t .atile,.atile{width:42px;height:42px;border-radius:13px}
+.acct-t .btn.sm{padding:0 16px}
+.pill{font-size:12px;padding:2px 10px}
+.note{font-size:12.5px}
+.field label{font-size:13px}.field input,.field select,.field textarea{min-height:44px;font-size:14px}
+.chips button{min-height:40px;padding:0 16px;font-size:13.5px}
+.stat b{font-size:17px}.stat small{font-size:12.5px}
+.kpi .val{font-size:24px}.kpi .lbl{font-size:13px}.kpi small{font-size:12.5px}
+.alerts{padding:18px 26px}
+.sim{padding:20px 26px}
+.modal{padding:26px;border-radius:24px}.modal h2{font-size:18px}
+.proto{font-size:12px;padding:5px 12px}
+summary{min-height:46px}
+.lang{display:inline-flex;background:#fff;border-radius:99px;padding:3px;gap:2px}
+.lang button{min-height:34px;padding:0 14px;border:none;border-radius:99px;background:transparent;font-size:13px;font-weight:600;color:var(--ink2)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+/* اتجاه الإنجليزي */
+[dir="ltr"] .side{border-radius:0 40px 40px 0}
+[dir="ltr"] thead th:first-child{border-radius:14px 0 0 14px}[dir="ltr"] thead th:last-child{border-radius:0 14px 14px 0}
+[dir="ltr"] :is(th,.nav button,.link,.ccard,.notif button,.kv b,.stat b,.kpi .val,.ov b,.acct small,.ccard .g b,.balance .big){text-align:left}
+[dir="ltr"] :is(th.n,td.n){text-align:right}
+[dir="ltr"] .toast{transform:translateX(-50%)}
+[dir="ltr"] .back svg{transform:scaleX(-1)}
+[dir="ltr"] .ov em{direction:ltr}
+@media (max-width:860px){
+ body{font-size:13.5px}
+ .top{padding:14px 16px 0;gap:10px}.top h1{font-size:19px}
+ .user{display:none}
+ .lang button{min-height:36px;padding:0 11px;font-size:12.5px}
+ .mbalwrap{padding:14px 16px 0}
+ .mbal{padding:16px 18px;border-radius:20px}.mbal b{font-size:22px}.mbal span{font-size:12px}
+ #view{padding:14px 16px 96px;gap:14px}
+ .card{padding:18px;border-radius:20px}
+ .ov{gap:14px}.ov span{font-size:12.5px}.ov b{font-size:20px}.ov b small,.ov em{font-size:12px}
+ .btn{min-height:44px;font-size:13.5px}
+ .bottom.six button{font-size:10.5px}
+ table{font-size:13px}td{padding:12px 6px}thead th{padding:10px 6px;font-size:12px}
+ .atile{width:40px;height:40px}
+}
+</style>
+</head>
+<body>
+<div class="proto" data-ar="نموذج تفاعلي للعرض — كل الأرقام والحسابات تجريبية" data-en="Interactive demo — all numbers and accounts are sample data"></div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img src="logo.png" alt="Golden Pixel"><div><b data-ar="جولدن بيكسل" data-en="Golden Pixel"></b><span data-ar="بوابة المروّجين" data-en="Advertiser portal"></span></div></div>
+    <div class="sbal"><span data-ar="رصيد محفظتك" data-en="Wallet balance"></span><div><b class="num" id="sideBal"></b><button class="plus" type="button" data-act="deposit" data-ar-label="طلب إيداع رصيد" data-en-label="Request a deposit"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+    <nav class="nav" id="sideNav" data-ar-label="القائمة الرئيسية" data-en-label="Main menu"></nav>
+    <div class="plat-note"><span class="logo"><img src="pl-tiktok.png" alt=""></span><span data-ar="حسابات تيك توك الإعلانية" data-en="TikTok ad accounts"></span></div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <div class="who"><img src="logo.png" alt=""><div><h1 id="pageTitle"></h1><p id="pageSub"></p></div></div>
+      <div class="tools">
+        <div class="lang" role="group" data-ar-label="لغة الواجهة" data-en-label="Interface language"><button type="button" data-lang="ar" lang="ar">العربية</button><button type="button" data-lang="en" lang="en">English</button></div>
+        <span class="user"><b data-ar="[اسم المروّج]" data-en="[Advertiser name]"></b><span class="av" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-5.500 8-5.500s6.500 1.500 8 5.500"/></svg></span></span>
+        <button class="btn icon" id="bell" type="button" data-ar-label="التنبيهات" data-en-label="Alerts" aria-expanded="false"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4"/></svg><span class="dot" id="bellDot" aria-hidden="true"></span></button>
+        <div class="notif" id="notif"></div>
+      </div>
+    </header>
+    <div class="mbalwrap"><div class="mbal"><div><span data-ar="رصيد محفظتك" data-en="Wallet balance"></span><b class="num" id="mBal"></b></div><button class="plus" type="button" data-act="deposit" data-ar-label="طلب إيداع رصيد" data-en-label="Request a deposit"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+    <main id="view" tabindex="-1"></main>
+  </div>
+</div>
+<nav class="bottom six" id="bottomNav" data-ar-label="التنقل السفلي" data-en-label="Bottom navigation"></nav>
+<div class="overlay" id="overlay"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" id="modal"></div></div>
+<div class="overlay" id="zoom" style="z-index:70"><div class="zoombox" role="dialog" aria-modal="true" data-ar-label="الباركود" data-en-label="QR code"><img src="qi-qr.png" alt=""><button class="btn" type="button" data-act="zoomclose" data-ar="إغلاق" data-en="Close"></button></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+var LANG='ar';
+try{var sv=localStorage.getItem('gp-lang');if(sv==='en'||sv==='ar')LANG=sv;}catch(e){}
+var L=function(ar,en){return LANG==='en'?en:ar;};
+var P2=function(p){return p?L(p[0],p[1]):'';};
+var money=function(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+var r2=function(n){return Math.round(n*100)/100;};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+var N=function(s){return '<span class="num">'+s+'</span>';};
+var nf=function(n){return n.toLocaleString('en-US');};
+var C=function(n,a1,a2,a3,e1,e2){return LANG==='en'?n+' '+(n===1?e1:e2):(n===1?a1:n===2?a2:n+' '+a3);};
+var cAcc=function(n){return C(n,'حساب واحد','حسابان','حسابات','account','accounts');};
+var I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+ accounts:'<rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/>',
+ auto:'<path d="M4 12a8 8 0 0113.7-5.7L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 01-13.7 5.7L4 16"/><path d="M4 20v-4h4"/>',
+ wallet:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M16 15h2"/>',
+ activity:'<path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+ support:'<path d="M4 13v-1a8 8 0 0116 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ down:'<path d="M12 5v14"/><path d="M6 13l6 6 6-6"/>',
+ up:'<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/>',
+ back:'<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+ split:'<path d="M12 4v6"/><path d="M12 10c0 4-6 3-6 9"/><path d="M12 10c0 4 6 3 6 9"/>',
+ play:'<path d="M7 5l12 7-12 7V5z"/>',
+ warn:'<path d="M12 4l9 16H3l9-16z"/><path d="M12 10v4M12 17h.01"/>'
+};
+var svg=function(k,s){return '<svg aria-hidden="true" width="'+(s||18)+'" height="'+(s||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[k]+'</svg>';};
+var UI='<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="3.6"/><path d="M4 20c1-3.600 3.600-5.200 7-5.200 1.200 0 2.300.200 3.200.600"/><path d="M17 15v5M14.500 17.500h5"/></svg>';
+
+var W={bal:2450,reserve:200,dep:5000,net:2550};
+var A=[
+ {id:1,impr:2214300,clicks:21480,name:'GOLDEN PIXEL 21',aid:'700000000001',st:'active',bal:182.40,daily:64.20,month:1017.60,auto:{on:true,min:50,amt:200}},
+ {id:2,impr:1105900,clicks:9870,name:'GOLDEN PIXEL 22',aid:'700000000002',st:'active',bal:61.30,daily:41.10,month:588.70,auto:{on:true,min:50,amt:150}},
+ {id:3,impr:312400,clicks:2460,name:'GOLDEN PIXEL 23',aid:'700000000003',st:'active',bal:12.00,daily:18.50,month:138.00,auto:{on:false,min:30,amt:100}},
+ {id:4,impr:498700,clicks:5120,name:'GOLDEN PIXEL 24',aid:'700000000004',st:'active',bal:310.00,daily:22.80,month:240.00,auto:{on:false,min:50,amt:150}},
+ {id:5,impr:0,clicks:0,name:'GOLDEN PIXEL 25',aid:'700000000005',st:'review',bal:0,daily:0,month:0,auto:{on:false,min:50,amt:150}}
+];
+var below=function(v){return ['الرصيد نزل تحت '+money(v),'Balance fell below '+money(v)];};
+var WAYS={'سوبر كي':'Super Qi','نيو':'Neo','FIB':'FIB','زين كاش':'Zain Cash'};
+var LOG=[
+ {t:['23 نوفمبر · 09:12','23 Nov · 09:12'],k:'auto',acc:1,amt:200,note:below(50)},
+ {t:['22 نوفمبر · 21:40','22 Nov · 21:40'],k:'auto',acc:2,amt:150,note:below(50)},
+ {t:['22 نوفمبر · 14:05','22 Nov · 14:05'],k:'manual',acc:4,amt:250,note:null},
+ {t:['21 نوفمبر · 11:30','21 Nov · 11:30'],k:'deposit',acc:0,amt:1500,note:['FIB · مؤكّد','FIB · confirmed']},
+ {t:['20 نوفمبر · 08:47','20 Nov · 08:47'],k:'auto',acc:1,amt:200,note:below(50)},
+ {t:['18 نوفمبر · 16:20','18 Nov · 16:20'],k:'manual',acc:3,amt:150,note:null}
+];
+var deposits=[
+ {d:['21 نوفمبر','21 Nov'],way:'FIB',amt:1500,st:'ok'},
+ {d:['12 نوفمبر','12 Nov'],way:'سوبر كي',amt:1500,st:'ok'},
+ {d:['3 نوفمبر','3 Nov'],way:'نيو',amt:2000,st:'ok'}
+];
+var requests=[], alertsExtra=[], simDay=0;
+var S={view:'home',acc:null,q:'',filter:'all',logFilter:'all'};
+var VIEWS={
+ home:['نظرة عامة','Overview','home','الرئيسية','Home',null],
+ accounts:['الحسابات الإعلانية','Ad accounts','accounts','الحسابات','Accounts',['الحسابات اللي عندك صلاحية عليها','The accounts you have access to']],
+ auto:['التعبئة التلقائية','Auto top-up','auto','تلقائي','Auto',['خلّي حساباتك تتعبى وحدها من محفظتك','Let your accounts refill themselves from your wallet']],
+ wallet:['المحفظة والإيداعات','Wallet & deposits','wallet','المحفظة','Wallet',['إيداعاتك وشلون توزّع رصيدك','Your deposits and how your balance is distributed']],
+ activity:['سجل الحركات','Activity log','activity','السجل','Log',['كل تعبئة وإيداع واسترجاع بوقته','Every top-up, deposit and refund, with its time']],
+ support:['الدعم والتواصل','Support','support','الدعم','Support',['تواصل مع فريق جولدن بيكسل','Reach the Golden Pixel team']]
+};
+var KIND={auto:['تعبئة تلقائية','Auto top-up','st-active'],manual:['تعبئة يدوية','Manual top-up','st-info'],deposit:['إيداع','Deposit','st-pending'],refund:['استرجاع للمحفظة','Refund to wallet','st-paused'],fail:['تعبئة تلقائية فشلت','Auto top-up failed','st-bad']};
+
+var acc=function(id){return A.filter(function(a){return a.id===id;})[0];};
+var live=function(){return A.filter(function(a){return a.st==='active';});};
+var sum=function(l,f){return r2(l.reduce(function(s,c){return s+c[f];},0));};
+var now=function(){return simDay?['يوم تجريبي +'+simDay,'Test day +'+simDay]:['23 نوفمبر · الآن','23 Nov · now'];};
+var isLow=function(a){return a.st==='active'&&a.bal<(a.auto.on?a.auto.min:30);};
+var ctr=function(a){return a.impr?(a.clicks/a.impr*100).toFixed(2):'—';};
+var stPill=function(a){
+ if(a.st==='review') return '<span class="pill st-pending">'+L('قيد التفعيل','Pending activation')+'</span>';
+ if(a.bal<=0) return '<span class="pill st-bad">'+L('متوقف · بدون رصيد','Stopped · no balance')+'</span>';
+ if(isLow(a)) return '<span class="pill st-pending">'+L('رصيد منخفض','Low balance')+'</span>';
+ return '<span class="pill st-active">'+L('نشط','Active')+'</span>';
+};
+var daysLeft=function(a){return a.daily>0?Math.floor(a.bal/a.daily):null;};
+function log(k,a,amt,note){LOG.unshift({t:now(),k:k,acc:a,amt:amt,note:note||null});}
+
+function doTopup(a,amt,kind,note){W.bal=r2(W.bal-amt);W.net=r2(W.net+amt);a.bal=r2(a.bal+amt);log(kind,a.id,amt,note);}
+function doRefund(a,amt){a.bal=r2(a.bal-amt);W.bal=r2(W.bal+amt);W.net=r2(W.net-amt);log('refund',a.id,amt,null);}
+function runAuto(){
+ var done=[],fail=[];
+ live().forEach(function(a){
+  if(!a.auto.on||a.bal>=a.auto.min) return;
+  if(W.bal-a.auto.amt<W.reserve){fail.push(a.name);log('fail',a.id,a.auto.amt,['رصيد المحفظة ينزل تحت حد الأمان '+money(W.reserve),'Wallet would fall below the safety limit of '+money(W.reserve)]);return;}
+  doTopup(a,a.auto.amt,'auto',below(a.auto.min));done.push(a.name);
+ });
+ return {done:done,fail:fail};
+}
+function simulate(){
+ simDay++;
+ live().forEach(function(a){var s=Math.min(a.bal,a.daily);a.bal=r2(a.bal-s);a.month=r2(a.month+s);});
+ var r=runAuto();alertsExtra=r.fail;
+ render(true);
+ toast(L('مرّ يوم صرف تجريبي. ','One test day of spend passed. ')+(r.done.length?L('تعبئة تلقائية: ','Auto top-up: ')+r.done.join(L('، ',', '))+'. ':L('ما صارت تعبئة تلقائية. ','No auto top-up was needed. '))+(r.fail.length?L('فشلت: ','Failed: ')+r.fail.length:''));
+}
+
+function alerts(){
+ var l=[], topL=L('تعبئة','Top up'), depL=L('طلب إيداع','Request deposit');
+ A.forEach(function(a){
+  if(a.st!=='active') return;
+  if(a.bal<=0) l.push([L('<b>'+a.name+'</b> متوقف لأن رصيده خلص.','<b>'+a.name+'</b> has stopped because its balance ran out.'),'topup',a.id,topL]);
+  else if(isLow(a)&&!a.auto.on) l.push([L('<b>'+a.name+'</b> رصيده منخفض ('+N(money(a.bal))+') والتعبئة التلقائية متوقفة عليه.','<b>'+a.name+'</b> is low on balance ('+N(money(a.bal))+') and auto top-up is off for it.'),'topup',a.id,topL]);
+ });
+ alertsExtra.forEach(function(m){l.push([L('تعبئة تلقائية ما اكتملت لحساب '+esc(m)+' لأن رصيد المحفظة ما يكفي.','Auto top-up for '+esc(m)+' did not go through because the wallet balance is too low.'),'deposit',0,depL]);});
+ if(W.bal<W.reserve) l.push([L('رصيد المحفظة ('+N(money(W.bal))+') تحت حد الأمان '+N(money(W.reserve))+'، فالتعبئة التلقائية راح تتوقف.','Wallet balance ('+N(money(W.bal))+') is under the safety limit of '+N(money(W.reserve))+', so auto top-up will pause.'),'deposit',0,depL]);
+ return l;
+}
+function alertsBox(){
+ var l=alerts(); if(!l.length) return '';
+ var h='<section class="card alerts"><div class="head"><h2>'+svg('warn',19)+' '+L('يحتاج انتباهك','Needs your attention')+'</h2><small>'+C(l.length,'تنبيه واحد','تنبيهان','تنبيهات','alert','alerts')+'</small></div>';
+ l.forEach(function(x){h+='<div class="al"><span>'+x[0]+'</span><button class="btn sm" type="button" data-act="'+x[1]+'" data-id="'+x[2]+'">'+x[3]+'</button></div>';});
+ return h+'</section>';
+}
+function accCell(a,st){return '<div class="acct"><span class="atile" aria-hidden="true">'+UI+'</span><div><span class="an"><button class="link" type="button" data-acc="'+a.id+'">'+a.name+'</button>'+(st?stPill(a):'')+'</span><small>ID: '+a.aid+'</small></div></div>';}
+function accTable(list){
+ if(!list.length) return '<p class="empty">'+L('لا توجد حسابات مطابقة.','No matching accounts.')+'</p>';
+ var top=L('تعبئة','Top up');
+ var h='<div class="scroll tbl"><table class="acct-t"><thead><tr><th>'+L('الحساب الإعلاني','Ad account')+'</th><th class="n">'+L('الرصيد','Balance')+'</th><th class="n">'+L('صرف اليوم','Spend today')+'</th><th class="n">'+L('صرف الشهر','Spend this month')+'</th><th class="n">'+L('الظهور','Impressions')+'</th><th class="n">'+L('النقرات','Clicks')+'</th><th class="n">CTR (%)</th><th></th></tr></thead><tbody>';
+ list.forEach(function(a){
+  var on=a.st==='active';
+  h+='<tr><td>'+accCell(a,true)+'</td><td class="n"><b>'+money(a.bal)+'</b></td><td class="n">'+money(a.daily)+'</td><td class="n">'+money(a.month)+'</td><td class="n">'+nf(a.impr)+'</td><td class="n">'+nf(a.clicks)+'</td><td class="n">'+ctr(a)+'</td><td>'+(on?'<button class="btn sm primary" type="button" data-act="topup" data-id="'+a.id+'">'+top+'</button>':'')+'</td></tr>';
+ });
+ h+='</tbody></table></div><div class="cards">';
+ list.forEach(function(a){
+  var on=a.st==='active';
+  h+='<div class="ccard"><div class="t">'+accCell(a)+stPill(a)+'</div><div class="g"><span><small>'+L('الرصيد','Balance')+'</small><b class="num">'+money(a.bal)+'</b></span><span><small>'+L('صرف اليوم','Spend today')+'</small><b class="num">'+money(a.daily)+'</b></span><span><small>CTR</small><b class="num">'+ctr(a)+'</b></span></div>'+(on?'<div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn sm primary" type="button" data-act="topup" data-id="'+a.id+'">'+top+'</button></div>':'')+'</div>';
+ });
+ return h+'</div>';
+}
+function logTable(list){
+ if(!list.length) return '<p class="empty">'+L('لا توجد حركات من هذا النوع.','No activity of this type.')+'</p>';
+ var h='<div class="scroll"><table class="ledger"><thead><tr><th>'+L('الوقت','Time')+'</th><th>'+L('النوع','Type')+'</th><th>'+L('الحساب','Account')+'</th><th class="n">'+L('المبلغ','Amount')+'</th></tr></thead><tbody>';
+ list.forEach(function(x){
+  var a=x.acc?acc(x.acc):null, plus=x.k==='deposit'||x.k==='refund';
+  h+='<tr><td class="tm">'+P2(x.t)+'</td><td><span class="pill '+KIND[x.k][2]+'">'+L(KIND[x.k][0],KIND[x.k][1])+'</span>'+(x.note?'<br><span class="note">'+esc(P2(x.note))+'</span>':'')+'</td><td>'+(a?a.name:L('المحفظة','Wallet'))+'</td><td class="n"><b>'+(x.k==='fail'?'—':(plus?'+':'−')+money(x.amt))+'</b></td></tr>';
+ });
+ return h+'</tbody></table></div><p class="note" style="margin-top:10px">'+L('الإشارة تبيّن أثر الحركة على رصيد المحفظة: + يزيدها و − ينقصها.','The sign shows the effect on your wallet balance: + adds to it, − takes from it.')+'</p>';
+}
+function autoCard(a){
+ if(a.st!=='active') return '<section class="card ac"><div class="head" style="margin-bottom:0"><div><h2>'+a.name+'</h2><span class="note">'+L('تگدر تشغّل التعبئة التلقائية عليه بعد ما يتفعّل.','You can turn on auto top-up once this account is activated.')+'</span></div><span class="pill st-pending">'+L('قيد التفعيل','Pending activation')+'</span></div></section>';
+ return '<section class="card ac" data-auto="'+a.id+'"><div class="head"><div><h2>'+a.name+'</h2><span class="note">'+L('الرصيد الحالي ','Current balance ')+N(money(a.bal))+L(' · صرفه اليومي تقريباً ',' · spends about ')+N(money(a.daily))+L('',' a day')+'</span></div><label class="sw"><input type="checkbox" data-toggle="'+a.id+'"'+(a.auto.on?' checked':'')+'><span class="tr" aria-hidden="true"></span><span class="swl">'+(a.auto.on?L('مفعّلة','On'):L('متوقفة','Off'))+'</span></label></div>'+
+ '<div class="three two-f"><div class="field"><label for="mn'+a.id+'">'+L('الحد الأدنى للرصيد ($)','Minimum balance ($)')+'</label><input id="mn'+a.id+'" type="number" min="1" step="1" dir="ltr" value="'+a.auto.min+'"><small class="note">'+L('لما ينزل تحته تبدأ التعبئة','Top-up starts when the balance falls below this')+'</small></div><div class="field"><label for="am'+a.id+'">'+L('مبلغ كل تعبئة ($)','Amount per top-up ($)')+'</label><input id="am'+a.id+'" type="number" min="1" step="1" dir="ltr" value="'+a.auto.amt+'"><small class="note">'+L('ينسحب من محفظتك','Taken from your wallet')+'</small></div></div>'+
+ '<p class="say">'+(a.auto.on?L('لما رصيد الحساب ينزل تحت <b class="num">'+money(a.auto.min)+'</b> نعبّيه <b class="num">'+money(a.auto.amt)+'</b> من محفظتك.','When this account falls below <b class="num">'+money(a.auto.min)+'</b>, we add <b class="num">'+money(a.auto.amt)+'</b> from your wallet.'):L('التعبئة التلقائية متوقفة على هذا الحساب، وتعبّيه يدوياً.','Auto top-up is off for this account. You top it up manually.'))+'</p><p class="err" id="ae'+a.id+'" role="alert"></p><button class="btn" type="button" data-act="saveauto" data-id="'+a.id+'">'+L('حفظ الحدود','Save limits')+'</button></section>';
+}
+
+var R={};
+R.home=function(){
+ var l=live(), on=l.filter(function(a){return a.auto.on;}).length;
+ return '<section class="card ov"><div><span>'+L('صرف اليوم','Today\'s spend')+'</span><b class="hot">'+money(sum(l,'daily'))+' <small>USD</small></b></div><div><span>'+L('الحسابات الإعلانية','Ad accounts')+'</span><b>'+l.length+' <em>/ '+A.length+' '+L('حسابات نشطة','active accounts')+'</em></b></div><div><span>'+L('الرصيد داخل الحسابات','Balance in accounts')+'</span><b>'+money(sum(A,'bal'))+'</b></div><div><span>'+L('التعبئة التلقائية','Auto top-up')+'</span><b>'+on+' <em>/ '+l.length+' '+L('حسابات','accounts')+'</em></b></div></section>'+
+ alertsBox()+
+ '<section class="card"><div class="head"><h2>'+L('حساباتك الإعلانية','Your ad accounts')+'</h2><div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn" type="button" data-act="dist">'+svg('split')+L('توزيع رصيد','Distribute balance')+'</button><button class="btn gold" type="button" data-act="newacc">'+svg('plus')+L('حساب جديد','New account')+'</button></div></div>'+accTable(A)+'</section>'+
+ '<section class="card"><div class="head"><h2>'+L('آخر الحركات','Recent activity')+'</h2><button class="btn" type="button" data-go="activity">'+L('السجل الكامل','Full log')+'</button></div>'+logTable(LOG.slice(0,5))+'</section>'+
+ '<section class="sim"><div><b>'+L('أداة تجربة للنموذج فقط','Demo-only test tool')+'</b><p class="note">'+L('تمرّر يوم صرف على كل الحسابات حتى تشوف شلون تشتغل التعبئة التلقائية والتنبيهات. ما تكون موجودة بالنسخة الفعلية.','Runs one day of spend on every account so you can watch auto top-up and alerts work. It will not exist in the real product.')+'</p></div><button class="btn dark" type="button" data-act="sim">'+svg('play')+L('محاكاة مرور يوم','Simulate one day')+'</button></section>';
+};
+function filtered(){
+ return A.filter(function(a){
+  var f=S.filter==='all'||(S.filter==='active'&&a.st==='active'&&!isLow(a)&&a.bal>0)||(S.filter==='low'&&(isLow(a)||(a.st==='active'&&a.bal<=0)))||(S.filter==='review'&&a.st==='review');
+  var q=!S.q||a.name.toLowerCase().indexOf(S.q.toLowerCase())>-1||a.aid.indexOf(S.q.replace(/ /g,''))>-1;
+  return f&&q;
+ });
+}
+R.accounts=function(){
+ if(S.acc) return detail(acc(S.acc));
+ var chips='<div class="chips" role="group">';
+ [['all','الكل','All'],['active','نشطة','Active'],['low','رصيد منخفض','Low balance'],['review','قيد التفعيل','Pending']].forEach(function(s){chips+='<button type="button" data-filter="'+s[0]+'" aria-pressed="'+(S.filter===s[0])+'">'+L(s[1],s[2])+'</button>';});
+ chips+='</div>';
+ var req='';
+ requests.forEach(function(x){req+='<div class="dep"><div class="mid"><b>'+L('طلب حساب جديد','New account request')+'</b><small>'+esc(x)+'</small></div><div class="end"><span class="pill st-pending">'+L('بانتظار الموافقة','Awaiting approval')+'</span></div></div>';});
+ return '<div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn gold" type="button" data-act="newacc">'+svg('plus')+L('حساب جديد','New account')+'</button><button class="btn" type="button" data-act="dist">'+svg('split')+L('توزيع رصيد على عدة حسابات','Distribute balance across accounts')+'</button></div><section class="card"><div class="head"><h2>'+L('حسابات تيك توك','TikTok accounts')+'</h2><small id="accCount"></small></div><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px">'+chips+'<div class="field" style="flex:1 1 220px"><label for="q">'+L('بحث بالاسم أو رقم الحساب','Search by name or account ID')+'</label><input id="q" type="search" value="'+esc(S.q)+'" autocomplete="off"></div></div><div id="list">'+accTable(filtered())+'</div></section>'+(req?'<section class="card"><div class="head"><h2>'+L('طلباتك','Your requests')+'</h2></div>'+req+'</section>':'');
+};
+function detail(a){
+ var d=daysLeft(a), st=function(l,v,cls){return '<div class="stat"><small>'+l+'</small><b class="'+(cls||'num')+'">'+v+'</b></div>';};
+ var mine=LOG.filter(function(x){return x.acc===a.id;});
+ return '<button class="btn back" type="button" data-act="back">'+svg('back')+L('رجوع إلى الحسابات','Back to accounts')+'</button><section class="card"><div class="head"><div><h2>'+a.name+'</h2><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px"><span class="plat"><span class="logo s"><img src="pl-tiktok.png" alt=""></span>'+L('تيك توك','TikTok')+'</span><span class="note num">ID '+a.aid+'</span>'+stPill(a)+'</div></div></div><div class="stats">'+st(L('رصيد الحساب','Account balance'),money(a.bal))+st(L('صرف اليوم','Spend today'),money(a.daily))+st(L('صرف هذا الشهر','Spend this month'),money(a.month))+st(L('الظهور','Impressions'),nf(a.impr))+st(L('النقرات','Clicks'),nf(a.clicks))+st(L('يكفي تقريباً','Lasts about'),d===null?'—':C(d,'يوم واحد','يومان','أيام','day','days'),'x')+'</div>'+(a.st==='active'?'<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px"><button class="btn primary" type="button" data-act="topup" data-id="'+a.id+'">'+svg('up')+L('تعبئة من المحفظة','Top up from wallet')+'</button><button class="btn" type="button" data-act="refund" data-id="'+a.id+'">'+svg('down')+L('استرجاع للمحفظة','Refund to wallet')+'</button><button class="btn" type="button" data-act="openads">'+L('فتح في مدير إعلانات تيك توك','Open in TikTok Ads Manager')+'</button></div>':'<p class="note" style="margin-top:14px">'+L('هذا الحساب بانتظار التفعيل من فريق جولدن بيكسل. بعد التفعيل تگدر تعبّيه.','This account is waiting for activation by the Golden Pixel team. You can top it up once it is active.')+'</p>')+'</section>'+(a.st==='active'?'<section class="card"><div class="head" style="margin-bottom:0"><div><h2>'+L('التعبئة التلقائية','Auto top-up')+'</h2><span class="note">'+(a.auto.on?L('مفعّلة: تحت '+N(money(a.auto.min))+' يتعبّى '+N(money(a.auto.amt))+' من المحفظة.','On: below '+N(money(a.auto.min))+' it gets '+N(money(a.auto.amt))+' from the wallet.'):L('متوقفة على هذا الحساب.','Off for this account.'))+'</span></div><button class="btn" type="button" data-go="auto">'+L('تغييرها من قسم التعبئة التلقائية','Change it in Auto top-up')+'</button></div></section>':'')+'<section class="card"><div class="head"><h2>'+L('حركات هذا الحساب','This account\'s activity')+'</h2></div>'+(mine.length?logTable(mine):'<p class="empty">'+L('لا توجد حركات على هذا الحساب لحد الآن.','No activity on this account yet.')+'</p>')+'</section>';
+}
+R.auto=function(){
+ var h='<section class="card"><div class="head"><h2>'+L('شلون تشتغل التعبئة التلقائية','How auto top-up works')+'</h2></div><ol class="steps"><li>'+L('<b>تحدد حد أدنى</b> لرصيد كل حساب.','<b>You set a minimum balance</b> for each account.')+'</li><li>'+L('<b>لما الرصيد ينزل تحته</b> نعبّي الحساب تلقائياً بالمبلغ اللي حددته، من رصيد محفظتك.','<b>When the balance falls below it</b>, we top the account up with the amount you chose, from your wallet.')+'</li><li>'+L('<b>حد أمان المحفظة</b> يوقف التعبئة إذا رصيد محفظتك نزل تحت المبلغ اللي تحدده.','<b>The wallet safety limit</b> pauses top-ups if your wallet falls below the amount you set.')+'</li></ol></section>'+
+ '<section class="card"><div class="head"><div><h2>'+L('حد أمان المحفظة','Wallet safety limit')+'</h2><span class="note">'+L('التعبئة التلقائية ما تنزّل رصيد محفظتك تحت هذا المبلغ.','Auto top-up never takes your wallet below this amount.')+'</span></div></div><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end"><div class="field" style="flex:1 1 200px;max-width:280px"><label for="resv">'+L('حد الأمان ($)','Safety limit ($)')+'</label><input id="resv" type="number" min="0" step="1" dir="ltr" value="'+W.reserve+'"></div><button class="btn" type="button" data-act="saveresv">'+L('حفظ','Save')+'</button></div><p class="err" id="resvErr" role="alert"></p></section>';
+ A.forEach(function(a){h+=autoCard(a);});
+ return h;
+};
+R.wallet=function(){
+ var d='';
+ deposits.forEach(function(x){d+='<div class="dep"><div class="ic" aria-hidden="true" style="color:#A85400">'+svg('down',20)+'</div><div class="mid"><b>'+(x.st==='ok'?L('إيداع رصيد','Deposit'):L('طلب إيداع','Deposit request'))+'</b><small>'+esc(P2(x.d)+' · '+L(x.way,WAYS[x.way])+' · '+L('صورة الحوالة مرفقة','receipt attached'))+'</small></div><div class="end"><b class="num">+'+(x.iqd?Math.round(x.amt).toLocaleString('en-US')+' '+L('د.ع','IQD'):money(x.amt))+'</b><span class="pill '+(x.st==='ok'?'st-active':'st-pending')+'">'+(x.st==='ok'?L('مؤكّد','Confirmed'):L('بانتظار التأكيد','Awaiting confirmation'))+'</span></div></div>';});
+ return '<div style="display:flex;flex-wrap:wrap;gap:10px"><button class="btn gold" type="button" data-act="deposit">'+svg('plus')+L('طلب إيداع رصيد','Request a deposit')+'</button><button class="btn" type="button" data-act="dist">'+svg('split')+L('توزيع على الحسابات','Distribute to accounts')+'</button></div><section class="card eq"><div class="kpi"><span class="lbl">'+L('إيداعاتك المؤكّدة','Confirmed deposits')+'</span><span class="val num">'+money(W.dep)+'</span><small>'+C(deposits.filter(function(x){return x.st==="ok";}).length,'إيداع واحد','إيداعان','إيداعات','deposit','deposits')+'</small></div><div class="op" aria-hidden="true">−</div><div class="kpi"><span class="lbl">'+L('موزّع على الحسابات','Distributed to accounts')+'</span><span class="val num">'+money(W.net)+'</span><small>'+L('التعبئات ناقص الاسترجاعات','Top-ups minus refunds')+'</small></div><div class="op" aria-hidden="true">=</div><div class="kpi res"><span class="lbl">'+L('رصيد المحفظة','Wallet balance')+'</span><span class="val num">'+money(W.bal)+'</span><small>'+L('متاح للتعبئة اليدوية والتلقائية','Available for manual and auto top-ups')+'</small></div></section><div class="two"><section class="card"><div class="head"><h2>'+L('سجل الإيداعات','Deposit history')+'</h2></div>'+d+'<p class="note" style="margin-top:12px">'+L('يُضاف الإيداع إلى محفظتك بعد أن يؤكّده فريق جولدن بيكسل، وهذا ياخذ تقريباً 5 دقائق.','A deposit is added to your wallet once the Golden Pixel team confirms it, which takes about 5 minutes.')+'</p></section><section class="card"><div class="head"><h2>'+L('حركات المحفظة','Wallet activity')+'</h2><button class="btn sm" type="button" data-go="activity">'+L('السجل الكامل','Full log')+'</button></div>'+logTable(LOG.filter(function(x){return x.k!=='fail';}).slice(0,8))+'</section></div>';
+};
+R.activity=function(){
+ var chips='<div class="chips" role="group">';
+ [['all','الكل','All'],['auto','تعبئة تلقائية','Auto top-up'],['manual','تعبئة يدوية','Manual top-up'],['deposit','إيداعات','Deposits'],['refund','استرجاع','Refunds'],['fail','فشلت','Failed']].forEach(function(s){chips+='<button type="button" data-logf="'+s[0]+'" aria-pressed="'+(S.logFilter===s[0])+'">'+L(s[1],s[2])+'</button>';});
+ chips+='</div>';
+ var l=LOG.filter(function(x){return S.logFilter==='all'||x.k===S.logFilter;});
+ return '<section class="card"><div class="head"><h2>'+L('كل الحركات','All activity')+'</h2><small>'+(l.length?C(l.length,'حركة واحدة','حركتان','حركات','entry','entries'):'')+'</small></div><div style="margin-bottom:16px">'+chips+'</div>'+logTable(l)+'</section>';
+};
+R.support=function(){
+ var wa=function(l,n,intl){return '<div class="wa"><div class="kv"><span>'+l+'</span><b class="num">'+n+'</b><button type="button" class="btn sm" data-copy="'+n+'">'+L('نسخ','Copy')+'</button></div><a class="btn wabtn" href="https://wa.me/'+intl+'" target="_blank" rel="noopener">'+L('فتح محادثة واتساب','Open WhatsApp chat')+'</a></div>';};
+ var qa=function(q,a){return '<details><summary>'+q+'</summary><p>'+a+'</p></details>';};
+ return '<div class="two"><section class="card"><div class="head"><h2>'+L('تواصل مع الدعم على الواتساب','Contact support on WhatsApp')+'</h2></div>'+wa(L('الرقم الأول','First number'),'07730955180','9647730955180')+wa(L('الرقم الثاني','Second number'),'07748219391','9647748219391')+'</section><section class="card"><div class="head"><h2>'+L('أسئلة متكررة','Frequently asked questions')+'</h2></div>'+
+ qa(L('شنو الفرق بين رصيد المحفظة ورصيد الحساب؟','What is the difference between wallet balance and account balance?'),L('رصيد المحفظة هو فلوسك المودعة عندنا وما موزّعة بعد. رصيد الحساب هو اللي داخل الحساب الإعلاني نفسه ويصرف منه تيك توك على إعلاناتك.','Wallet balance is money you deposited with us that is not distributed yet. Account balance is what sits inside the ad account itself, which TikTok spends on your ads.'))+
+ qa(L('شلون أعبّي حساب؟','How do I top up an account?'),L('اضغط «تعبئة» يم الحساب، اكتب المبلغ، وينتقل فوراً من محفظتك للحساب. أو شغّل التعبئة التلقائية من قسمها.','Press “Top up” next to the account, enter the amount, and it moves from your wallet to the account right away. Or turn on auto top-up in its section.'))+
+ qa(L('متى تفشل التعبئة التلقائية؟','When does auto top-up fail?'),L('إذا رصيد محفظتك ما يكفي أو ينزل تحت حد الأمان. يوصلك تنبيه وقتها.','When your wallet balance is too low or would fall below the safety limit. You get an alert when that happens.'))+
+ qa(L('أگدر أرجّع رصيد من حساب للمحفظة؟','Can I move balance from an account back to my wallet?'),L('إي، من صفحة الحساب اضغط «استرجاع للمحفظة» واكتب المبلغ.','Yes. On the account page, press “Refund to wallet” and enter the amount.'))+
+ qa(L('متى يظهر الإيداع بمحفظتي؟','When does a deposit show in my wallet?'),L('بعد أن يؤكّده فريق جولدن بيكسل، وهذا ياخذ تقريباً 5 دقائق من تسجيل الطلب.','After the Golden Pixel team confirms it, about 5 minutes after you submit the request.'))+
+ '</section></div>';
+};
+
+var view=document.getElementById('view'), toastEl=document.getElementById('toast'), overlay=document.getElementById('overlay'), modal=document.getElementById('modal'), notif=document.getElementById('notif'), bell=document.getElementById('bell'), zoom=document.getElementById('zoom'), tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('open');clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove('open');},4200);}
+function openModal(h){modal.innerHTML=h;overlay.classList.add('open');modal.scrollTop=0;}
+function closeModal(){overlay.classList.remove('open');}
+var acts=function(ok){return '<div class="acts"><button class="btn primary" type="submit">'+ok+'</button><button class="btn" type="button" data-act="close">'+L('إلغاء','Cancel')+'</button></div>';};
+var walletNow=function(){return L('رصيد محفظتك الآن ','Your wallet balance is ')+N(money(W.bal));};
+function openTopup(id){
+ var o='';live().forEach(function(a){o+='<option value="'+a.id+'"'+(a.id===id?' selected':'')+'>'+a.name+' — '+L('الرصيد','balance')+' '+money(a.bal)+'</option>';});
+ openModal('<h2 id="mTitle">'+L('تعبئة حساب من المحفظة','Top up an account from your wallet')+'</h2><p class="note">'+walletNow()+'</p><form id="topForm" class="mform"><div class="field"><label for="tAcc">'+L('الحساب','Account')+'</label><select id="tAcc">'+o+'</select></div><div class="field"><label for="tAmt">'+L('مبلغ التعبئة ($)','Top-up amount ($)')+'</label><input id="tAmt" type="number" min="1" step="0.01" inputmode="decimal" dir="ltr"></div><div class="chips" role="group">'+[50,100,200,500].map(function(v){return '<button type="button" data-amt="'+v+'">'+N('$'+v)+'</button>';}).join('')+'</div><p class="say" id="tPrev">'+L('اكتب المبلغ حتى تشوف رصيد المحفظة بعد التعبئة.','Enter an amount to see your wallet balance after the top-up.')+'</p><p class="err" id="tErr" role="alert"></p>'+acts(L('تعبئة الآن','Top up now'))+'</form>');
+}
+function openRefund(id){
+ var a=acc(id);
+ openModal('<h2 id="mTitle">'+L('استرجاع رصيد للمحفظة','Refund balance to your wallet')+'</h2><p class="note">'+a.name+' · '+L('رصيده الآن ','balance ')+N(money(a.bal))+'</p><form id="refForm" class="mform" data-id="'+id+'"><div class="field"><label for="rAmt">'+L('المبلغ المسترجع ($)','Refund amount ($)')+'</label><input id="rAmt" type="number" min="1" step="0.01" inputmode="decimal" dir="ltr"></div><p class="err" id="rErr" role="alert"></p>'+acts(L('استرجاع','Refund'))+'</form>');
+}
+function openDist(){
+ var c='';live().forEach(function(a){c+='<label class="pick"><input type="checkbox" name="dAcc" value="'+a.id+'"'+(isLow(a)||a.bal<=0?' checked':'')+'><span><b>'+a.name+'</b><small>'+L('الرصيد','Balance')+' '+N(money(a.bal))+'</small></span>'+stPill(a)+'</label>';});
+ openModal('<h2 id="mTitle">'+L('توزيع رصيد على عدة حسابات','Distribute balance across accounts')+'</h2><p class="note">'+walletNow()+L('. المبلغ ينقسم بالتساوي على الحسابات اللي تختارها.','. The amount is split equally across the accounts you select.')+'</p><form id="distForm" class="mform"><fieldset class="ways"><legend>'+L('الحسابات','Accounts')+'</legend><div style="display:flex;flex-direction:column;gap:8px">'+c+'</div></fieldset><div class="field"><label for="dTot">'+L('المبلغ الكلي للتوزيع ($)','Total amount to distribute ($)')+'</label><input id="dTot" type="number" min="1" step="0.01" inputmode="decimal" dir="ltr"></div><p class="say" id="dPrev"></p><p class="err" id="dErr2" role="alert"></p>'+acts(L('توزيع الآن','Distribute now'))+'</form>');
+ distPrev();
+}
+function openNewAcc(){
+ openModal('<h2 id="mTitle">'+L('طلب حساب إعلاني جديد','Request a new ad account')+'</h2><p class="note">'+L('يوصل الطلب لفريق جولدن بيكسل، وبعد الموافقة يظهر الحساب بقائمتك وتنطى عليه الصلاحية.','Your request goes to the Golden Pixel team. Once approved, the account appears in your list and you get access to it.')+'</p><form id="newForm" class="mform"><div class="field"><label for="nName">'+L('اسم النشاط أو المتجر اللي راح تروّج له','Name of the business or store you will advertise')+'</label><input id="nName" type="text"></div><div class="field"><label for="nNote">'+L('ملاحظات (اختياري)','Notes (optional)')+'</label><textarea id="nNote"></textarea></div><p class="err" id="nErr" role="alert"></p>'+acts(L('تسجيل الطلب','Submit request'))+'</form>');
+}
+function kv(l,v){return '<div class="kv"><span>'+l+'</span><b class="num">'+v+'</b><button type="button" class="btn sm" data-copy="'+v+'">'+L('نسخ','Copy')+'</button></div>';}
+function wayInfo(w){
+ var qr=function(src,alt){return '<div class="qrbox"><span>'+L('الباركود','QR code')+'</span><button type="button" class="qr" data-act="zoom" aria-label="'+L('تكبير الباركود','Enlarge QR code')+'"><img src="'+src+'" alt="'+alt+'"></button><small>'+L('اضغط على الباركود لتكبيره','Press the QR code to enlarge it')+'</small></div>';};
+ var ttl=function(n){return '<b>'+L('تفاصيل التحويل عبر ','Transfer details for ')+n+'</b>';};
+ if(w==='سوبر كي') return ttl(L('سوبر كي','Super Qi'))+kv(L('رقم البطاقة','Card number'),'910302564505')+kv(L('رقم الهاتف','Phone number'),'07730955180')+qr('qi-qr.png',L('باركود سوبر كي باسم حامد قيس','Super Qi QR code in the name of Hamed Qais'));
+ if(w==='نيو') return ttl(L('نيو','Neo'))+kv(L('رقم البطاقة','Card number'),'4604-1599-1900-1135');
+ if(w==='FIB') return ttl(L('FIB — المصرف العراقي الأول','FIB — First Iraqi Bank'))+qr('fib-qr.png',L('باركود FIB ورمزه PLZA-3OZB-DLBG','FIB QR code, code PLZA-3OZB-DLBG'));
+ return '';
+}
+function openDeposit(){
+ var way=function(cls,v,off){return '<label class="way '+cls+(off?' off':'')+'"><input type="radio" name="way" value="'+v+'"'+(v==='سوبر كي'?' checked':'')+(off?' disabled':'')+'><span>'+L(v,WAYS[v])+(off?'<small>'+L('قريباً','Soon')+'</small>':'')+'</span></label>';};
+ openModal('<h2 id="mTitle">'+L('طلب إيداع رصيد','Request a deposit')+'</h2><p class="note">'+L('اختر طريقة الدفع، حوّل المبلغ على التفاصيل الظاهرة، ثم سجّل المبلغ وارفع صورة الحوالة. يضاف لمحفظتك بعد تأكيد فريق جولدن بيكسل.','Choose a payment method, transfer the amount using the details shown, then enter the amount and upload the transfer receipt. It is added to your wallet once the Golden Pixel team confirms it.')+'</p><form id="depForm" class="mform"><fieldset class="ways"><legend>'+L('طريقة الدفع','Payment method')+'</legend><div class="wrow">'+way('qi','سوبر كي')+way('neo','نيو')+way('fib','FIB')+way('zain','زين كاش',true)+'</div></fieldset><div id="wayInfo" class="wayinfo" aria-live="polite">'+wayInfo('سوبر كي')+'</div><div class="field"><label for="dAmt">'+L('المبلغ بالدينار العراقي','Amount in Iraqi dinar')+'</label><input id="dAmt" type="number" min="1" step="1" inputmode="numeric" dir="ltr" aria-describedby="dHint"><small id="dHint" class="note">'+L('يتحوّل إلى الدولار بمحفظتك عند التأكيد حسب سعر الصرف المعتمد: [سعر الصرف]','Converted to US dollars in your wallet on confirmation, at the approved rate: [exchange rate]')+'</small></div><div class="field"><label for="dFile">'+L('صورة الحوالة','Transfer receipt image')+'</label><input id="dFile" type="file" accept="image/*"><img id="dPrev" alt="'+L('معاينة صورة الحوالة','Receipt preview')+'" style="display:none;max-width:100%;max-height:180px;border-radius:10px;border:1px solid #E3E5EA;object-fit:contain"></div><p class="err" id="dErr" role="alert"></p>'+acts(L('تسجيل الطلب','Submit request'))+'</form>');
+}
+
+function statics(){
+ document.documentElement.lang=LANG;document.documentElement.dir=LANG==='en'?'ltr':'rtl';
+ document.title=L('بوابة المروّجين — جولدن بيكسل (نموذج تفاعلي)','Advertiser portal — Golden Pixel (interactive demo)');
+ Array.prototype.forEach.call(document.querySelectorAll('[data-ar]'),function(e){e.textContent=L(e.dataset.ar,e.dataset.en);});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-ar-label]'),function(e){e.setAttribute('aria-label',L(e.dataset.arLabel,e.dataset.enLabel));});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'),function(e){e.setAttribute('aria-pressed',e.dataset.lang===LANG);});
+}
+function navs(){
+ var s='',b='';
+ Object.keys(VIEWS).forEach(function(k){
+  var v=VIEWS[k], cur=S.view===k?' aria-current="page"':'';
+  s+='<button type="button" data-go="'+k+'"'+cur+'>'+svg(v[2],21)+L(v[0],v[1])+'</button>';
+  b+='<button type="button" data-go="'+k+'"'+cur+'>'+svg(v[2],20)+L(v[3],v[4])+'</button>';
+ });
+ document.getElementById('sideNav').innerHTML=s;document.getElementById('bottomNav').innerHTML=b;
+}
+function render(keep){
+ statics();navs();
+ var v=VIEWS[S.view];
+ document.getElementById('pageTitle').textContent=L(v[0],v[1]);
+ document.getElementById('pageSub').textContent=v[5]?P2(v[5]):'';
+ document.getElementById('sideBal').textContent=money(W.bal);document.getElementById('mBal').textContent=money(W.bal);
+ var al=alerts(), nh='';
+ al.forEach(function(x){nh+='<button type="button" data-act="'+x[1]+'" data-id="'+x[2]+'"><span>'+x[0]+'</span><small>'+x[3]+'</small></button>';});
+ notif.innerHTML=nh||'<p class="empty" style="padding:12px">'+L('لا توجد تنبيهات. كل حساباتك بخير.','No alerts. All your accounts are fine.')+'</p>';
+ document.getElementById('bellDot').style.display=al.length?'block':'none';
+ view.innerHTML=R[S.view]();
+ var c=document.getElementById('accCount'); if(c){c.textContent=cAcc(filtered().length);}
+ if(!keep) window.scrollTo(0,0);
+}
+function go(v){S.view=v;S.acc=null;try{if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);}catch(e){}render();}
+function val(id){var e=document.getElementById(id);return e?parseFloat(e.value):NaN;}
+function err(id,m,focus){document.getElementById(id).textContent=m;if(focus)document.getElementById(focus).focus();}
+function picked(){return Array.prototype.slice.call(document.querySelectorAll('input[name=dAcc]:checked')).map(function(x){return acc(+x.value);});}
+function split(total,n){var each=Math.floor(total/n*100)/100,arr=[];for(var i=0;i<n;i++)arr.push(each);arr[n-1]=r2(total-each*(n-1));return arr;}
+function distPrev(){
+ var p=picked(), tot=val('dTot'), el=document.getElementById('dPrev'); if(!el)return;
+ if(!p.length||!(tot>0)){el.textContent=L('اختر الحسابات واكتب المبلغ حتى تشوف حصة كل حساب.','Select accounts and enter an amount to see each account\'s share.');return;}
+ var s=split(tot,p.length), ev=s[0]===s[s.length-1];
+ el.innerHTML=L('كل حساب ياخذ '+(ev?'':'تقريباً ')+'<b class="num">'+money(s[0])+'</b> ('+cAcc(p.length)+')، ورصيد المحفظة يصير <b class="num">'+money(r2(W.bal-tot))+'</b>.','Each account gets '+(ev?'':'about ')+'<b class="num">'+money(s[0])+'</b> ('+cAcc(p.length)+'), and your wallet balance becomes <b class="num">'+money(r2(W.bal-tot))+'</b>.');
+}
+
+document.addEventListener('click',function(e){
+ var t=e.target.closest('[data-go],[data-acc],[data-act],[data-copy],[data-filter],[data-logf],[data-amt],[data-lang]');
+ if(!e.target.closest('#bell')&&!e.target.closest('#notif')){notif.classList.remove('open');bell.setAttribute('aria-expanded','false');}
+ if(e.target===overlay){closeModal();return;}
+ if(e.target===zoom){zoom.classList.remove('open');return;}
+ if(!t)return;
+ var d=t.dataset, id=d.id?+d.id:0;
+ notif.classList.remove('open');
+ if(d.lang){LANG=d.lang;try{localStorage.setItem('gp-lang',LANG);}catch(x){}closeModal();render(true);}
+ else if(d.copy){var v=d.copy;try{navigator.clipboard.writeText(v).then(function(){toast(L('تم نسخ الرقم: ','Number copied: ')+v);},function(){toast(L('انسخ الرقم يدوياً: ','Copy the number manually: ')+v);});}catch(x){toast(L('انسخ الرقم يدوياً: ','Copy the number manually: ')+v);}}
+ else if(d.amt){var f=document.getElementById('tAmt');f.value=d.amt;f.dispatchEvent(new Event('input',{bubbles:true}));}
+ else if(d.go){go(d.go);}
+ else if(d.acc){S.view='accounts';S.acc=+d.acc;render();}
+ else if(d.filter){S.filter=d.filter;render(true);}
+ else if(d.logf){S.logFilter=d.logf;render(true);}
+ else if(d.act==='back'){S.acc=null;render();}
+ else if(d.act==='topup'){openTopup(id);}
+ else if(d.act==='refund'){openRefund(id);}
+ else if(d.act==='dist'){openDist();}
+ else if(d.act==='newacc'){openNewAcc();}
+ else if(d.act==='deposit'){openDeposit();}
+ else if(d.act==='close'){closeModal();}
+ else if(d.act==='sim'){simulate();}
+ else if(d.act==='zoom'){var qi=t.querySelector('img'),zi=zoom.querySelector('img');zi.src=qi.getAttribute('src');zi.alt=qi.alt;zoom.classList.add('open');}
+ else if(d.act==='zoomclose'){zoom.classList.remove('open');}
+ else if(d.act==='openads'){toast(L('في النسخة الفعلية يفتح هذا الحساب بمدير إعلانات تيك توك.','In the real product this opens the account in TikTok Ads Manager.'));}
+ else if(d.act==='saveresv'){var rv=val('resv');if(!(rv>=0)){err('resvErr',L('اكتب حد الأمان بالأرقام، مثال: 200','Enter the safety limit as a number, for example 200'),'resv');return;}W.reserve=r2(rv);render(true);toast(L('انحفظ حد أمان المحفظة: ','Wallet safety limit saved: ')+money(W.reserve));}
+ else if(d.act==='saveauto'){
+  var a=acc(id), mn=val('mn'+id), am=val('am'+id);
+  if(!(mn>0)||!(am>0)){err('ae'+id,L('املأ الحقلين بأرقام أكبر من صفر.','Fill in both fields with numbers above zero.'));return;}
+  a.auto.min=r2(mn);a.auto.amt=r2(am);
+  var r=a.auto.on?runAuto():{done:[],fail:[]};alertsExtra=r.fail;render(true);
+  toast(L('انحفظت حدود '+a.name+'.','Limits saved for '+a.name+'.')+(r.done.length?L(' وتعبّى الحساب تلقائياً لأن رصيده تحت الحد.',' It was topped up now because its balance is below the minimum.'):''));
+ }
+});
+bell.addEventListener('click',function(){var o=notif.classList.toggle('open');bell.setAttribute('aria-expanded',o);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(zoom.classList.contains('open')){zoom.classList.remove('open');return;}closeModal();notif.classList.remove('open');}});
+document.addEventListener('change',function(e){
+ var t=e.target;
+ if(t.name==='way'){document.getElementById('wayInfo').innerHTML=wayInfo(t.value);}
+ if(t.id==='dFile'){var pv=document.getElementById('dPrev'),f=t.files&&t.files[0];if(f){document.getElementById('dErr').textContent='';try{pv.src=URL.createObjectURL(f);pv.style.display='block';}catch(x){}}else{pv.style.display='none';}}
+ if(t.dataset&&t.dataset.toggle){
+  var a=acc(+t.dataset.toggle);a.auto.on=t.checked;
+  var mn=val('mn'+a.id),am=val('am'+a.id);if(mn>0&&am>0){a.auto.min=r2(mn);a.auto.amt=r2(am);}
+  var r=a.auto.on?runAuto():{done:[],fail:[]};alertsExtra=r.fail;render(true);
+  toast(a.auto.on?(L('تفعّلت التعبئة التلقائية على '+a.name+'.','Auto top-up is on for '+a.name+'.')+(r.done.length?L(' وتعبّى الآن لأن رصيده تحت الحد.',' It was topped up now because its balance is below the minimum.'):'')):L('توقفت التعبئة التلقائية على '+a.name+'.','Auto top-up is off for '+a.name+'.'));
+ }
+ if(t.name==='dAcc'){distPrev();}
+});
+document.addEventListener('input',function(e){
+ var t=e.target;
+ if(t.id==='q'){S.q=t.value.trim();document.getElementById('list').innerHTML=accTable(filtered());document.getElementById('accCount').textContent=cAcc(filtered().length);}
+ if(t.id==='tAmt'){var a=val('tAmt');document.getElementById('tPrev').innerHTML=a>0?L('رصيد المحفظة بعد التعبئة: ','Wallet balance after the top-up: ')+'<b class="num">'+money(r2(W.bal-a))+'</b>':L('اكتب المبلغ حتى تشوف رصيد المحفظة بعد التعبئة.','Enter an amount to see your wallet balance after the top-up.');}
+ if(t.id==='dTot'){distPrev();}
+});
+document.addEventListener('submit',function(e){
+ e.preventDefault();
+ var f=e.target.id;
+ if(f==='topForm'){
+  var a=acc(+document.getElementById('tAcc').value), m=val('tAmt');
+  if(!(m>0)){err('tErr',L('اكتب مبلغ التعبئة بالأرقام، مثال: 100','Enter the top-up amount as a number, for example 100'),'tAmt');return;}
+  if(m>W.bal){err('tErr',L('المبلغ أكبر من رصيد محفظتك ('+money(W.bal)+'). قلّل المبلغ أو اطلب إيداع.','That is more than your wallet balance ('+money(W.bal)+'). Lower the amount or request a deposit.'),'tAmt');return;}
+  doTopup(a,r2(m),'manual',null);closeModal();render(true);toast(L('تعبّى '+a.name+' بمبلغ '+money(m)+'. رصيده صار '+money(a.bal)+'.','Topped up '+a.name+' with '+money(m)+'. Its balance is now '+money(a.bal)+'.'));
+ }
+ if(f==='refForm'){
+  var b=acc(+e.target.dataset.id), x=val('rAmt');
+  if(!(x>0)){err('rErr',L('اكتب المبلغ بالأرقام، مثال: 50','Enter the amount as a number, for example 50'),'rAmt');return;}
+  if(x>b.bal){err('rErr',L('المبلغ أكبر من رصيد الحساب ('+money(b.bal)+').','That is more than the account balance ('+money(b.bal)+').'),'rAmt');return;}
+  doRefund(b,r2(x));closeModal();render(true);toast(L('رجع '+money(x)+' من '+b.name+' إلى محفظتك.','Refunded '+money(x)+' from '+b.name+' to your wallet.'));
+ }
+ if(f==='distForm'){
+  var p=picked(), tot=val('dTot');
+  if(!p.length){err('dErr2',L('اختر حساب واحد على الأقل.','Select at least one account.'));return;}
+  if(!(tot>0)){err('dErr2',L('اكتب المبلغ الكلي بالأرقام، مثال: 300','Enter the total amount as a number, for example 300'),'dTot');return;}
+  if(tot>W.bal){err('dErr2',L('المبلغ أكبر من رصيد محفظتك ('+money(W.bal)+').','That is more than your wallet balance ('+money(W.bal)+').'),'dTot');return;}
+  var s=split(r2(tot),p.length);p.forEach(function(a,i){doTopup(a,s[i],'manual',['توزيع على '+p.length+' حسابات','Split across '+p.length+' accounts']);});
+  closeModal();render(true);toast(L('توزّع '+money(tot)+' على ','Distributed '+money(tot)+' across ')+cAcc(p.length)+'.');
+ }
+ if(f==='newForm'){
+  var nm=document.getElementById('nName').value.trim();
+  if(!nm){err('nErr',L('اكتب اسم النشاط أو المتجر.','Enter the business or store name.'),'nName');return;}
+  requests.unshift(nm);closeModal();S.view='accounts';S.acc=null;render();toast(L('تسجّل طلب الحساب بالنموذج، ويظهر تحت «طلباتك».','Account request recorded in the demo. It appears under “Your requests”.'));
+ }
+ if(f==='depForm'){
+  var am=val('dAmt');
+  if(!(am>0)){err('dErr',L('اكتب مبلغ الإيداع بالدينار وبالأرقام، مثال: 150000','Enter the deposit amount in dinar as a number, for example 150000'),'dAmt');return;}
+  var fl=document.getElementById('dFile').files;
+  if(!fl||!fl.length){err('dErr',L('ارفع صورة الحوالة حتى نگدر نأكد الإيداع.','Upload the transfer receipt so we can confirm the deposit.'),'dFile');return;}
+  deposits.unshift({d:now(),way:document.querySelector('input[name=way]:checked').value,amt:am,iqd:true,st:'wait'});
+  closeModal();go('wallet');toast(L('تسجّل الطلب بالنموذج، ويظهر بسجل الإيداعات «بانتظار التأكيد».','Request recorded in the demo. It shows in deposit history as “Awaiting confirmation”.'));
+ }
+});
+function fromHash(){var h=(location.hash||'').replace('#','');if(VIEWS[h]&&h!==S.view){S.view=h;S.acc=null;render();}}
+window.addEventListener('hashchange',fromHash);
+var h0=(location.hash||'').replace('#','');if(VIEWS[h0])S.view=h0;
+render();
+})();
+</script>
+</body>
+</html>
